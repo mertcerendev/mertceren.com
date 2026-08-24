@@ -372,10 +372,11 @@ export function HeaderChick() {
   }, []);
 
   /**
-   * The frame loop sizes the ground too, but only from the first frame and
-   * only while frames are running — a background tab throttles them away.
-   * Setting it here as well means the strip is clickable from the first
-   * paint, and stays right across a resize.
+   * The frame loop sizes the ground as well, but only from its first frame,
+   * and a tab that is never shown never gets one. Observed rather than
+   * measured once on mount: maxX() reads where the header controls sit, and
+   * on mount they may not be laid out yet — measuring then returns 0 and
+   * leaves the ground one chick wide.
    */
   useEffect(() => {
     const sync = () => {
@@ -383,13 +384,19 @@ export function HeaderChick() {
       const ground = groundRef.current;
       if (!chick || !ground) return;
       const width = Math.round(maxX() + chick.offsetWidth);
+      if (groundWidthRef.current === width) return;
       ground.style.width = `${width}px`;
       groundWidthRef.current = width;
     };
 
+    const observer = new ResizeObserver(sync);
+    const track = trackRef.current;
+    const limit = document.querySelector("[data-chick-limit]");
+    if (track) observer.observe(track);
+    if (limit) observer.observe(limit);
+
     sync();
-    window.addEventListener("resize", sync);
-    return () => window.removeEventListener("resize", sync);
+    return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
