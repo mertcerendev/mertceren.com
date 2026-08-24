@@ -10,7 +10,6 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageToggle } from "@/components/layout/language-toggle";
 import { HeaderChick } from "@/components/ui/header-chick";
 import { CursorMuteToggle } from "@/components/ui/cursor-mute-toggle";
-import { ScrambleText } from "@/components/ui/scramble-text";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -115,9 +114,38 @@ export function Header() {
                   href={item.href}
                   lang={foreignLang(item.label)}
                   onClick={(e) => goTo(e, item.href)}
-                  className="microlabel relative text-foreground after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-accent after:transition-transform after:duration-300 hover:after:origin-left hover:after:scale-x-100"
+                  className="microlabel group relative block text-foreground after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-accent after:transition-transform after:duration-300 hover:after:origin-left hover:after:scale-x-100"
                 >
-                  <ScrambleText text={item.label} />
+                  {/* The label rolls up and an accent copy takes its place,
+                      arriving with the accent rule that wipes in underneath —
+                      one gesture, not two.
+
+                      This replaced a per-frame character scramble. That one
+                      did not move the layout (the face is monospace, so the
+                      row measured the same to the pixel however it was
+                      jumbled) but it rewrote every unsettled letter on every
+                      frame, from a pool with no Turkish letters in it, so
+                      Turkish words decayed into Latin noise — and sweeping
+                      the row set all seven running at once, which read as a
+                      shudder rather than a decode. Transforms only here:
+                      nothing re-renders, and the row cannot shift.
+
+                      1.5em of line box, not the 1.35 that also fitted: the
+                      cedilla on İLETİŞİM came within 0.43px of the clip edge
+                      there, measured off the font's own ink bounds, and a
+                      margin that thin is a rounding error away from shaving
+                      the tail. */}
+                  <span className="relative block h-[1.5em] overflow-hidden">
+                    <span className="block leading-[1.5] transition-transform duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:-translate-y-full">
+                      {item.label}
+                    </span>
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 block translate-y-full leading-[1.5] text-accent transition-transform duration-[450ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0"
+                    >
+                      {item.label}
+                    </span>
+                  </span>
                 </a>
               ))}
             </nav>
