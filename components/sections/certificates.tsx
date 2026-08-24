@@ -405,8 +405,16 @@ export function Certificates() {
                   /* `fill` needs a positioned box of its own here: putting it
                       on the padded parent would let the scan sit under the
                       p-2 and touch the border. The dialog caps at max-w-4xl,
-                      so 896px is as large as this ever needs to be served. */
-                  <div className="relative h-full w-full">
+                      so 896px is as large as this ever needs to be served.
+
+                      self-stretch, not h-full: the parent centres its items,
+                      so this box was sized by its content — and its only
+                      content is the absolutely positioned image, which
+                      contributes none. It measured 0 tall and the panel was
+                      a black rectangle. Stretching takes the height from the
+                      row instead, and h-full has to go with it or the
+                      explicit height cancels the stretch. */
+                  <div className="relative w-full self-stretch">
                     <Image
                       src={selectedCert.image}
                       alt={selectedCert.title}

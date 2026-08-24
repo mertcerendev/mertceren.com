@@ -141,9 +141,20 @@ body {
   border-radius: 2px;
 }
 
-/* Editorial hairline */
-.hairline {
-  border-color: var(--line);
+/* Editorial hairline.
+
+   In @layer components, not bare, and the same goes for .microlabel below.
+   Unlayered CSS beats every layered rule whatever its specificity, and
+   Tailwind emits its utilities into @layer utilities — so as plain rules
+   these two silently defeated any utility aimed at the properties they set.
+   Every `border hairline … hover:border-accent` in the codebase had a dead
+   hover, and .microlabel's colour swallowed 23 text-* utilities, which is
+   why the accent labels were grey and the ink on the accent buttons was
+   grey on orange. Layering restores what each call site already asked for. */
+@layer components {
+  .hairline {
+    border-color: var(--line);
+  }
 }
 
 /* Native cursor hidden while the custom cursor is active */
@@ -426,13 +437,15 @@ html.custom-cursor [data-cursor="chick"][data-dragging="true"] * {
   }
 }
 
-/* Mono micro-label */
-.microlabel {
-  font-family: var(--font-jetbrains-mono), monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--muted);
+/* Mono micro-label. Layered — see the note on .hairline. */
+@layer components {
+  .microlabel {
+    font-family: var(--font-jetbrains-mono), monospace;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
 }
 
 /* Small mono links read as ~14px tall, which is a poor thumb target. The
