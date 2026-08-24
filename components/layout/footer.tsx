@@ -59,6 +59,11 @@ export function Footer() {
                   beside it. */}
               <a
                 href={social.href}
+                /* CSS uppercase is locale-aware and these pages are lang="tr",
+                   so the Turkish rule mapped i to İ and the row rendered
+                   GİTHUB and LİNKEDIN. The labels are English brand names;
+                   saying so is the fix, not rewriting them in data. */
+                lang="en"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="microlabel tap-target group inline-flex items-center gap-1.5"

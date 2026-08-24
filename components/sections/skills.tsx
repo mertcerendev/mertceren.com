@@ -9,6 +9,7 @@ import {
   useVelocity,
 } from "motion/react";
 import { techMarquee, type Skill } from "@/lib/data";
+import { Foreign } from "@/lib/foreign";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Marquee } from "@/components/ui/marquee";
@@ -61,6 +62,9 @@ export function Skills() {
                 <button
                   key={discipline}
                   type="button"
+                  /* The disciplines are English in both locales, and these
+                     chips are uppercased — see lib/foreign. */
+                  lang="en"
                   aria-pressed={isPinned}
                   onMouseEnter={() => setHovered(discipline)}
                   onMouseLeave={() => setHovered(null)}
@@ -157,10 +161,10 @@ export function Skills() {
                       <div>
                         <p className="text-sm font-medium sm:text-base">{skill.name}</p>
                         <p className="microlabel mt-0.5 normal-case tracking-normal">
-                          {skill.note}
+                          <Foreign text={skill.note} />
                         </p>
                       </div>
-                      <span className="microlabel shrink-0 text-accent">
+                      <span lang="en" className="microlabel shrink-0 text-accent">
                         {skill.discipline}
                       </span>
                     </li>
@@ -172,8 +176,9 @@ export function Skills() {
         </div>
       </div>
 
-      {/* Tech stack marquee */}
-      <div className="mt-20 border-y hairline py-6 sm:mt-24">
+      {/* Tech stack marquee. lang, because the items are English in both
+          locales and this row is uppercased — see lib/foreign. */}
+      <div lang="en" className="mt-20 border-y hairline py-6 sm:mt-24">
         <motion.div style={{ skewX }}>
           <Marquee
             items={techMarquee}

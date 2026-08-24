@@ -1,12 +1,16 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
+/* label and meta take nodes, not just strings: this header is uppercased by
+   CSS, which applies the Turkish rule on these pages, so a heading holding an
+   English brand needs that run wrapped in lang="en". See lib/foreign. */
 type SectionHeadingProps = {
   index: string;
-  label: string;
-  meta?: string;
+  label: ReactNode;
+  meta?: ReactNode;
   className?: string;
 };
 

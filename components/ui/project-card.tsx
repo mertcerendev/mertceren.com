@@ -14,6 +14,7 @@ import type { Project } from "@/lib/data";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { localePath } from "@/lib/content";
 import { Magnetic } from "@/components/ui/magnetic-button";
+import { foreignLang } from "@/lib/foreign";
 import { AskAiButton } from "@/components/ui/ask-ai-button";
 
 type ProjectCardProps = {
@@ -201,6 +202,7 @@ export function ProjectCard({
               {project.tags.map((tag) => (
                 <li
                   key={tag}
+                  lang={foreignLang(tag)}
                   className="rounded-full border border-white/20 px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-white/80 sm:text-[0.625rem]"
                 >
                   {tag}

@@ -9,6 +9,7 @@ import { RevealText } from "@/components/ui/reveal-text";
 import { Magnetic } from "@/components/ui/magnetic-button";
 import { getContent, isLocale, localePath } from "@/lib/content";
 import { projects } from "@/lib/data";
+import { foreignLang } from "@/lib/foreign";
 import { AskAiButton } from "@/components/ui/ask-ai-button";
 
 type Params = { lang: string; slug: string };
@@ -112,6 +113,7 @@ export default async function CaseStudyPage({
             {project.tags.map((tag) => (
               <li
                 key={tag}
+                lang={foreignLang(tag)}
                 className="rounded-full border hairline px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted sm:text-[0.625rem]"
               >
                 {tag}

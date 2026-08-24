@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { featuredRepos } from "@/lib/data";
+import { Foreign } from "@/lib/foreign";
 import type { GithubStats as LiveStats } from "@/lib/github";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -91,7 +92,7 @@ export function GithubStats({
     <section id="github" className="px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
       <SectionHeading
         index="04"
-        label={githubSection.label}
+        label={<Foreign text={githubSection.label} />}
         /* The heading promises live data, so it only says so when the fetch
            actually landed. */
         meta={isLive ? githubSection.meta : githubSection.metaStale}
@@ -116,7 +117,9 @@ export function GithubStats({
                   <h3 className="font-display text-xl font-bold text-foreground sm:text-2xl">
                     @mertcerendev
                   </h3>
-                  <p className="microlabel text-muted">GitHub · Software Engineering Student</p>
+                  <p lang="en" className="microlabel text-muted">
+                    GitHub · Software Engineering Student
+                  </p>
                 </div>
               </div>
               <p className="text-sm text-muted max-w-xl">
@@ -132,7 +135,7 @@ export function GithubStats({
                     ·
                   </span>
                   <span className="text-muted">
-                    {stats!.publicRepos} {githubSection.publicRepos}
+                    {stats!.publicRepos} <Foreign text={githubSection.publicRepos} />
                   </span>
                 </p>
               )}
@@ -144,7 +147,12 @@ export function GithubStats({
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-full border border-accent bg-accent px-6 py-3 font-mono text-xs uppercase tracking-[0.14em] text-accent-ink font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-accent/20 shrink-0"
             >
-              {githubSection.viewProfile}
+              {/* One span, so the parts Foreign splits out stay in a single
+                  flex item — as separate items the space between them would
+                  be dropped and the label would run together. */}
+              <span>
+                <Foreign text={githubSection.viewProfile} />
+              </span>
             </a>
           </div>
         </motion.div>
@@ -181,7 +189,9 @@ export function GithubStats({
                         className={`h-full ${lang.color}`}
                       />
                     </div>
-                    <p className="microlabel text-[0.6875rem] text-muted sm:text-[0.65rem]">{lang.note}</p>
+                    <p lang="en" className="microlabel text-[0.6875rem] text-muted sm:text-[0.65rem]">
+                      {lang.note}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -199,7 +209,7 @@ export function GithubStats({
             <div className="flex items-center justify-between px-1">
               <h4 className="font-display text-lg font-bold">{githubSection.reposTitle}</h4>
               <span className="microlabel text-accent">
-                {githubSection.publicRepos}
+                <Foreign text={githubSection.publicRepos} />
               </span>
             </div>
 

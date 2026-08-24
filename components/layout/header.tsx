@@ -5,6 +5,7 @@ import { useMotionValueEvent, useScroll } from "motion/react";
 import { useLenis } from "lenis/react";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { localePath } from "@/lib/content";
+import { foreignLang } from "@/lib/foreign";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageToggle } from "@/components/layout/language-toggle";
 import { HeaderChick } from "@/components/ui/header-chick";
@@ -112,6 +113,7 @@ export function Header() {
                 <a
                   key={item.href}
                   href={item.href}
+                  lang={foreignLang(item.label)}
                   onClick={(e) => goTo(e, item.href)}
                   className="microlabel relative text-foreground after:absolute after:-bottom-1 after:left-0 after:h-px after:w-full after:origin-right after:scale-x-0 after:bg-accent after:transition-transform after:duration-300 hover:after:origin-left hover:after:scale-x-100"
                 >
@@ -165,6 +167,7 @@ export function Header() {
             <span key={item.href} className="block overflow-hidden py-1">
               <a
                 href={item.href}
+                lang={foreignLang(item.label)}
                 onClick={(e) => goTo(e, item.href)}
                 style={{ transitionDelay: menuOpen ? `${60 + i * 40}ms` : "0ms" }}
                 className={cn(

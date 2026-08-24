@@ -70,10 +70,13 @@ export function SocialLinks() {
                       </span>
                     </>
                   ) : (
-                    <span className="microlabel">{social.label.slice(0, 2)}</span>
+                    <span lang="en" className="microlabel">{social.label.slice(0, 2)}</span>
                   )}
                 </span>
-                <span className="microlabel transition-colors duration-500 group-hover:text-accent">
+                <span
+                  lang="en"
+                  className="microlabel transition-colors duration-500 group-hover:text-accent"
+                >
                   {social.label}
                 </span>
               </a>

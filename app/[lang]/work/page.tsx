@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { RevealText } from "@/components/ui/reveal-text";
 import { getContent, isLocale, localePath, locales } from "@/lib/content";
+import { foreignLang } from "@/lib/foreign";
 
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
@@ -116,6 +117,7 @@ export default async function WorkIndexPage({
                       {project.tags.slice(0, 3).map((tag) => (
                         <li
                           key={tag}
+                          lang={foreignLang(tag)}
                           className="rounded-full border hairline px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-muted sm:text-[0.625rem]"
                         >
                           {tag}
