@@ -1,18 +1,42 @@
 "use client";
 
+import { useRef } from "react";
 import { useLenis } from "lenis/react";
 import { socials } from "@/lib/data";
 import { useContent } from "@/components/providers/locale-provider";
 import { useLocalTime } from "@/lib/hooks/use-local-time";
 
+/* Shared by both copies of the wordmark so the lit one lands exactly over
+   the base — they differ only in what fills the clipped text. */
+const MARK =
+  "translate-y-[14%] select-none whitespace-nowrap bg-clip-text text-center font-display text-[15.5vw] font-extrabold uppercase leading-[0.8] tracking-tight text-transparent";
+
 export function Footer() {
   const lenis = useLenis();
   const { profile, ui } = useContent();
   const time = useLocalTime(profile.timezone);
+  const litRef = useRef<HTMLParagraphElement>(null);
 
   const backToTop = () => {
     if (lenis) lenis.scrollTo(0, { duration: 1.4 });
     else window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /* Written straight onto the node instead of through state: this fires on
+     every mousemove, and a setState per frame would re-render the whole
+     footer to move a gradient the compositor can move on its own. */
+  const trackLight = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse") return;
+    const el = litRef.current;
+    if (!el) return;
+    const box = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${((e.clientX - box.left) / box.width) * 100}%`);
+    el.style.setProperty("--my", `${((e.clientY - box.top) / box.height) * 100}%`);
+    el.style.opacity = "1";
+  };
+
+  const dropLight = () => {
+    if (litRef.current) litRef.current.style.opacity = "0";
   };
 
   return (
@@ -74,9 +98,29 @@ export function Footer() {
         </button>
       </div>
 
-      {/* Cropped wordmark */}
-      <div aria-hidden className="mt-8 overflow-hidden">
-        <p className="translate-y-[14%] select-none whitespace-nowrap bg-foreground/[0.06] bg-clip-text text-center font-display text-[15.5vw] font-extrabold uppercase leading-[0.8] tracking-tight text-transparent">
+      {/* Cropped wordmark, lit by the pointer. It was 6% ink and purely
+          decorative — a whole band of the page doing nothing. A second copy
+          on top carries a radial gradient that follows the cursor, so the
+          name reads only where the light falls, like a torch on a wall.
+          Mouse only: there is no pointer to follow on a phone, and the
+          overlay stays at zero there. `--foreground`, not
+          `--color-foreground` — @theme inline does not emit the latter. */}
+      <div
+        aria-hidden
+        onPointerMove={trackLight}
+        onPointerLeave={dropLight}
+        className="relative mt-8 overflow-hidden"
+      >
+        <p className={`${MARK} bg-foreground/[0.06]`}>{profile.name}</p>
+        <p
+          ref={litRef}
+          style={{
+            opacity: 0,
+            backgroundImage:
+              "radial-gradient(13vw circle at var(--mx, 50%) var(--my, 50%), color-mix(in oklab, var(--foreground) 42%, transparent) 0%, transparent 72%)",
+          }}
+          className={`${MARK} absolute left-0 top-0 w-full transition-opacity duration-700 ease-out`}
+        >
           {profile.name}
         </p>
       </div>
