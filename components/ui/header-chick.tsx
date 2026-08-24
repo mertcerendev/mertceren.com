@@ -54,8 +54,70 @@ const QUEASY_EN = [
   "Do that again and I'll be sick on you 🤮",
 ];
 
+/** Feeding. */
+/**
+ * Ground speed while heading for food. The stride in globals.css divides by
+ * the same number — see .chick-rushing there — so the feet stay planted.
+ * Sized off the runway rather than picked by feel: at 3x the longest
+ * possible trip is about five seconds and a typical one about two, where 2x
+ * left the far corner at nearly seven.
+ */
+const FOOD_RUSH = 3;
+/** Reuses the peck keyframe, so it has to stay in step with PECK_MS. */
+const EAT_MS = PECK_MS;
+const THANKS_MS = 2800;
+/**
+ * A drop closer than this to the chick's middle is refused: the seeds would
+ * land under its feet and the whole trip would be over before it started.
+ */
+const FOOD_CLEAR = 26;
+const FOOD_W = 16;
+/**
+ * Height of the clickable ground. The strip the chick walks in is 28px and
+ * overlaps the bottom of the nav links and the wordmark by a few pixels, so
+ * only the part below them takes clicks — otherwise dropping food would eat
+ * the last row of every link above it. Measured: the lowest control inside
+ * the chick's reach ends 20px above the floor on a desktop and 22px on a
+ * phone, so 18px clears both.
+ */
+const GROUND_H = 18;
+
+const THANKS_TR = [
+  "Mmm, teşekkürler! 🌾",
+  "Tam da acıkmıştım 😋",
+  "Sen iyi birisin 💛",
+  "Bir tane daha? 👀",
+  "Cik cik! (çeviri: harikasın)",
+  "Karnım doydu, sağ ol! 🐥",
+];
+
+const THANKS_EN = [
+  "Mmm, thank you! 🌾",
+  "I was just getting hungry 😋",
+  "You are a good one 💛",
+  "One more? 👀",
+  "Cheep cheep! (translation: you rock)",
+  "That hit the spot, thanks! 🐥",
+];
+
 const between = ([min, max]: readonly [number, number]) =>
   min + Math.random() * (max - min);
+
+/**
+ * Shuffled draw without repeats: refills and reshuffles once the deck runs
+ * out, so the same line never comes up twice in a row.
+ */
+const drawFrom = (deck: { current: number[] }, size: number) => {
+  if (deck.current.length === 0) {
+    const next = Array.from({ length: size }, (_, i) => i);
+    for (let i = next.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [next[i], next[j]] = [next[j], next[i]];
+    }
+    deck.current = next;
+  }
+  return deck.current.pop()!;
+};
 
 /** Walking pose, drawn facing right; the walk loop flips it to go left. */
 function ChickSide() {
@@ -171,9 +233,24 @@ export function HeaderChick() {
   /** Read inside the frame loop, so it is a ref rather than state. */
   const speedRef = useRef(SPEED);
 
+  const groundRef = useRef<HTMLDivElement>(null);
+  const groundWidthRef = useRef(-1);
+  /** Centre of the food in track coordinates, or null when there is none. */
+  const foodRef = useRef<number | null>(null);
+  const thanksTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const thanksDeckRef = useRef<number[]>([]);
+  /**
+   * eatFood is reached from the frame loop, which is set up once and so
+   * holds the first render's closure. Read through a ref, or switching
+   * locale would leave the thank you in the language the page opened in.
+   */
+  const isEnglishRef = useRef(isEnglish);
+
   const [greeting, setGreeting] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [queasyMessage, setQueasyMessage] = useState<string | null>(null);
+  const [food, setFood] = useState<number | null>(null);
+  const [thanksMessage, setThanksMessage] = useState<string | null>(null);
 
   /**
    * Far end of the walk. The track spans the whole header, but the chick has
@@ -224,17 +301,8 @@ export function HeaderChick() {
 
   const goQueasy = () => {
     const pool = isEnglish ? QUEASY_EN : QUEASY_TR;
-    if (queasyDeckRef.current.length === 0) {
-      const deck = Array.from({ length: pool.length }, (_, i) => i);
-      for (let i = deck.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [deck[i], deck[j]] = [deck[j], deck[i]];
-      }
-      queasyDeckRef.current = deck;
-    }
-
     queasyRef.current = true;
-    setQueasyMessage(pool[queasyDeckRef.current.pop()!]);
+    setQueasyMessage(pool[drawFrom(queasyDeckRef, pool.length)]);
     reversalsRef.current = [];
 
     if (queasyTimerRef.current) clearTimeout(queasyTimerRef.current);
@@ -242,6 +310,28 @@ export function HeaderChick() {
       queasyRef.current = false;
       setQueasyMessage(null);
     }, QUEASY_MS);
+  };
+
+  /**
+   * Reached the seeds. The peck keyframe doubles as the eat, and the thank
+   * you lands when the mouthful is done rather than on arrival, so the line
+   * reads as a reply to the food and not to the walk.
+   */
+  const eatFood = (now: number) => {
+    foodRef.current = null;
+    setFood(null);
+    peckUntilRef.current = now + EAT_MS;
+    nextPeckAtRef.current = now + EAT_MS + between(PECK_EVERY);
+
+    if (thanksTimerRef.current) clearTimeout(thanksTimerRef.current);
+    thanksTimerRef.current = setTimeout(() => {
+      const pool = isEnglishRef.current ? THANKS_EN : THANKS_TR;
+      setThanksMessage(pool[drawFrom(thanksDeckRef, pool.length)]);
+      thanksTimerRef.current = setTimeout(
+        () => setThanksMessage(null),
+        THANKS_MS
+      );
+    }, EAT_MS);
   };
 
   /** Counts changes of direction; enough of them in a short window is a shake. */
@@ -264,6 +354,10 @@ export function HeaderChick() {
     }
   };
 
+  useEffect(() => {
+    isEnglishRef.current = isEnglish;
+  }, [isEnglish]);
+
   /* Kept in step with the `--chick-gait` media query in globals.css: the
      stride length is fixed by the leg geometry, so slowing one without the
      other would have the feet skating. */
@@ -275,6 +369,27 @@ export function HeaderChick() {
     sync();
     mq.addEventListener("change", sync);
     return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  /**
+   * The frame loop sizes the ground too, but only from the first frame and
+   * only while frames are running — a background tab throttles them away.
+   * Setting it here as well means the strip is clickable from the first
+   * paint, and stays right across a resize.
+   */
+  useEffect(() => {
+    const sync = () => {
+      const chick = chickRef.current;
+      const ground = groundRef.current;
+      if (!chick || !ground) return;
+      const width = Math.round(maxX() + chick.offsetWidth);
+      ground.style.width = `${width}px`;
+      groundWidthRef.current = width;
+    };
+
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
   }, []);
 
   useEffect(() => {
@@ -299,7 +414,34 @@ export function HeaderChick() {
           nextPeckAtRef.current = now + between(PECK_EVERY);
         }
 
-        if (!resting && dt) {
+        // The clickable ground only reaches as far as the chick does, so the
+        // strip is sized from the same limit the walk turns at.
+        const ground = groundRef.current;
+        if (ground) {
+          const width = Math.round(max + chick.offsetWidth);
+          if (groundWidthRef.current !== width) {
+            ground.style.width = `${width}px`;
+            groundWidthRef.current = width;
+          }
+        }
+
+        const foodX = foodRef.current;
+
+        if (!resting && dt && foodX !== null) {
+          // Straight for it, at a trot. No pecking on the way and no turning
+          // at the ends: it has somewhere to be.
+          const centre = xRef.current + chick.offsetWidth / 2;
+          const delta = foodX - centre;
+          const step = speedRef.current * FOOD_RUSH * (dt / 1000);
+          dirRef.current = delta >= 0 ? 1 : -1;
+
+          if (Math.abs(delta) <= step) {
+            xRef.current = foodX - chick.offsetWidth / 2;
+            eatFood(now);
+          } else {
+            xRef.current += dirRef.current * step;
+          }
+        } else if (!resting && dt) {
           xRef.current += dirRef.current * speedRef.current * (dt / 1000);
 
           if (xRef.current >= max) {
@@ -320,6 +462,9 @@ export function HeaderChick() {
         xRef.current = Math.min(max, Math.max(0, xRef.current));
         paint(resting);
         chick.classList.toggle("chick-pecking", pecking);
+        // Shortens the stride to match the extra ground speed; see the
+        // .chick-rushing note in globals.css.
+        chick.classList.toggle("chick-rushing", foodX !== null && !resting);
       }
 
       lastFrameRef.current = now;
@@ -334,6 +479,7 @@ export function HeaderChick() {
     () => () => {
       if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
       if (queasyTimerRef.current) clearTimeout(queasyTimerRef.current);
+      if (thanksTimerRef.current) clearTimeout(thanksTimerRef.current);
     },
     []
   );
@@ -354,6 +500,35 @@ export function HeaderChick() {
   const releaseAfterDelay = () => {
     if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
     greetTimerRef.current = setTimeout(endGreeting, GREET_MS);
+  };
+
+  /**
+   * Scatter seeds where the ground was clicked. One lot at a time, and never
+   * under the chick — a click that lands on the chick itself never gets here
+   * anyway, since the chick is its own element on top of this one, but a
+   * click just beside it would otherwise drop food half under its body.
+   */
+  const dropFood = (e: React.MouseEvent<HTMLDivElement>) => {
+    const track = trackRef.current;
+    const chick = chickRef.current;
+    if (!track || !chick) return;
+    if (foodRef.current !== null || draggingRef.current) return;
+
+    const half = chick.offsetWidth / 2;
+    const max = maxX();
+    const at = e.clientX - track.getBoundingClientRect().left;
+    // Held inside the runway, or the chick would walk to the end and stall
+    // next to food it can never stand on.
+    const x = Math.min(max + half, Math.max(half, at));
+
+    if (Math.abs(x - (xRef.current + half)) < FOOD_CLEAR) return;
+
+    foodRef.current = x;
+    setFood(x);
+    // It notices straight away: drop a mouthful of nothing and cut short the
+    // pause it may be standing in.
+    peckUntilRef.current = 0;
+    pausedUntilRef.current = 0;
   };
 
   const positionFromPointer = (clientX: number) => {
@@ -383,6 +558,40 @@ export function HeaderChick() {
       className="pointer-events-none absolute inset-x-0 bottom-0 px-5 sm:px-8 lg:px-12"
     >
       <div ref={trackRef} className="relative h-7 overflow-hidden">
+        {/* The ground takes the clicks. Only the bottom band of the strip,
+            and only as wide as the chick can walk — see GROUND_H. It sits
+            before the chick in the DOM so the chick paints over it and takes
+            its own clicks, which is what keeps a tap on the chick from
+            dropping food underneath itself. */}
+        <div
+          ref={groundRef}
+          onClick={dropFood}
+          style={{ height: GROUND_H }}
+          className="pointer-events-auto absolute bottom-0 left-0"
+        />
+
+        {food !== null && (
+          <div
+            className="pointer-events-none absolute bottom-0 left-0"
+            style={{ transform: `translateX(${food - FOOD_W / 2}px)` }}
+          >
+            <svg
+              width={FOOD_W}
+              height="7"
+              viewBox="0 0 16 7"
+              fill="none"
+              style={{
+                animation: "chick-food-drop 320ms cubic-bezier(0.34,1.56,0.64,1)",
+                transformOrigin: "50% 100%",
+              }}
+            >
+              <ellipse cx="3.4" cy="5.2" rx="2.1" ry="1.5" fill="#c8a05a" transform="rotate(-18 3.4 5.2)" />
+              <ellipse cx="8" cy="4.1" rx="2.3" ry="1.6" fill="#e0b96d" transform="rotate(12 8 4.1)" />
+              <ellipse cx="12.6" cy="5.4" rx="2" ry="1.4" fill="#b98f4c" transform="rotate(-8 12.6 5.4)" />
+            </svg>
+          </div>
+        )}
+
         <div
           ref={chickRef}
           data-cursor="chick"
@@ -440,12 +649,14 @@ export function HeaderChick() {
         </div>
       </div>
 
-      {queasyMessage && (
+      {/* One bubble for both moods — they never overlap, and paint() moves
+          whichever is up, since it lives outside the clipped strip. */}
+      {(queasyMessage ?? thanksMessage) && (
         <div
           ref={bubbleRef}
           className="absolute left-0 top-full mt-1 whitespace-nowrap rounded-xl border border-accent/30 bg-background/95 px-3 py-1.5 text-xs font-medium text-foreground shadow-xl backdrop-blur-md"
         >
-          {queasyMessage}
+          {queasyMessage ?? thanksMessage}
         </div>
       )}
     </div>

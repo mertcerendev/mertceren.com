@@ -314,6 +314,21 @@ html[data-intro-seen] .intro-overlay {
   }
 }
 
+/* Trotting to food. FOOD_RUSH in header-chick.tsx multiplies the ground
+   speed, so the stride has to divide by the same number or the feet skate —
+   the very thing SPEED was picked to avoid. Both values below are the gait
+   above over FOOD_RUSH (3): change one and change all three. Set on the
+   chick rather than :root, so it only inherits down the bird. */
+.chick-rushing {
+  --chick-gait: 0.06s;
+}
+
+@media (max-width: 39.99rem) {
+  .chick-rushing {
+    --chick-gait: 0.0857s;
+  }
+}
+
 .chick-leg-a {
   animation: chick-leg var(--chick-gait) linear infinite;
 }
@@ -391,6 +406,22 @@ html[data-intro-seen] .intro-overlay {
 .chick-pecking svg {
   animation: chick-peck 1.4s ease-in-out;
   transform-origin: 50% 88%;
+}
+
+/* Seeds landing when the header strip is clicked. */
+@keyframes chick-food-drop {
+  0% {
+    transform: translateY(-9px) scale(0.5);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(0) scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes chick-woozy {
