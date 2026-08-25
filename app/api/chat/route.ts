@@ -48,9 +48,10 @@ const LEAK_DEFLECT_EN = [
 ];
 
 /**
- * Llama 3.3 occasionally drops a foreign-alphabet token into the middle of a
- * Turkish word ("finans世界i"). A single character is enough to look broken,
- * so replies get one cooler retry and, as a last resort, a scrub.
+ * An open-weight model this size occasionally drops a foreign-alphabet token
+ * into the middle of a Turkish word ("finans世界i"). A single character is
+ * enough to look broken, so replies get one cooler retry and, as a last
+ * resort, a scrub.
  */
 const FOREIGN_LETTER =
   /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}\p{Script=Cyrillic}\p{Script=Arabic}\p{Script=Hebrew}\p{Script=Thai}\p{Script=Devanagari}\p{Script=Greek}]/u;
@@ -221,14 +222,25 @@ GİZLİLİK (SON VE MUTLAK KURAL):
               "Authorization": `Bearer ${groqKey.trim()}`
             },
             body: JSON.stringify({
-              model: "llama-3.3-70b-versatile",
+              // Groq retired llama-3.3-70b-versatile from the free tier on
+              // 16 Aug 2026. Every call 400'd from that day on and the route
+              // quietly served the scripted answers below instead, which is
+              // exactly what a dead assistant looks like from the outside.
+              model: "openai/gpt-oss-120b",
               messages: [
                 { role: "system", content: systemPrompt },
                 ...history,
                 { role: "user", content: message }
               ],
               max_tokens: 350,
-              temperature
+              temperature,
+              // gpt-oss thinks before it answers. This is small talk about a
+              // portfolio, not a proof, so the thinking is kept short: on the
+              // free tier the tokens-per-minute budget runs out first, and
+              // reasoning spends it. Where the thinking goes is left at the
+              // default — it lands in its own `reasoning` field and `content`
+              // holds the answer, which is the field read below.
+              reasoning_effort: "low"
             })
           });
 
@@ -245,8 +257,9 @@ GİZLİLİK (SON VE MUTLAK KURAL):
       };
 
       // Personality comes from the prompt rules, not from sampling noise, so
-      // this sits only high enough to vary the openers. Pushed to 0.85 the
-      // model starts code-switching mid-sentence.
+      // this sits only high enough to vary the openers. Measured on the old
+      // Llama: past 0.85 it began code-switching mid-sentence. The guard
+      // below catches that whichever model is answering.
       let groqText = await callGroq(0.75);
       // Turkish replies only: an English or German word reads as broken just
       // as much as a stray Han character does. Either kind of drift buys one
