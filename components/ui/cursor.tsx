@@ -15,7 +15,6 @@ const IDLE_MESSAGES_TR = [
   "Yine mi aşağı kaydırıyorsun? 📜",
   "Sayfayı aşındırdın valla 😅",
   "Gözüm üzerinde 👀",
-  "Chatbot'a bir merhaba desene! 🤖",
   "Kaydırma tekerleğin yorulmadı mı? 🖱️",
   "Projeleri beğendin mi? 🚀",
   "Aşağıdaki butonlar tıklanmak için var 🚀",
@@ -24,12 +23,36 @@ const IDLE_MESSAGES_TR = [
   "Sayfada kaybolursan ses et! 📍",
   "Tıklamaktan korkma, bozulmaz! 🖱️💥",
   "Biraz daha durursan çay koyacağım ☕",
-  "Asistana soracağına bana sorsana 🙄",
-  "Asistan mı ben mi? Bir karar ver 😤",
-  "O chatbot'un benden fazla nesi var? 😒",
   "Ben de buradayım ha, unutma 👀",
   "İmleçim diye ciddiye almıyorsun beni 🥲",
   "Sen bilirsin, ben bir şey demiyorum... 😑",
+];
+
+/**
+ * Replaces the idle deck while the pointer is resting on a project card.
+ *
+ * These lines used to sit in the general deck and so came up anywhere — a
+ * nudge to ask the assistant about a project, delivered while you were
+ * reading the contact section, and a jealous remark about a button that was
+ * nowhere on screen. Here they land next to the "Asistana Sor" button they
+ * are talking about, which is the only place either joke actually lands.
+ */
+const PROJECT_MESSAGES_TR = [
+  "Bu projeyi asistana sorabilirsin 🤖",
+  "Detayını merak ettiysen asistan anlatır 👇",
+  "Asistana soracağına bana sorsana 🙄",
+  "Asistan mı ben mi? Bir karar ver 😤",
+  "O asistanın benden fazla nesi var? 😒",
+  "Karta tıkla, hikâyesi içeride 📂",
+];
+
+const PROJECT_MESSAGES_EN = [
+  "You can ask the assistant about this one 🤖",
+  "Curious about the details? The assistant knows 👇",
+  "Ask me instead of that assistant 🙄",
+  "The assistant or me? Pick one 😤",
+  "What's that assistant got that I haven't? 😒",
+  "Click the card, the story is inside 📂",
 ];
 
 const IDLE_MESSAGES_EN = [
@@ -42,7 +65,6 @@ const IDLE_MESSAGES_EN = [
   "Scrolling down again? 📜",
   "You're wearing out the page 😅",
   "My eyes are on you 👀",
-  "Say hi to the chatbot! 🤖",
   "Is your scroll wheel tired yet? 🖱️",
   "Liking the projects so far? 🚀",
   "The buttons below are meant to be clicked 🚀",
@@ -51,9 +73,6 @@ const IDLE_MESSAGES_EN = [
   "Shout if you get lost on the page! 📍",
   "Don't be afraid to click, it won't break! 🖱️💥",
   "If you stay a bit longer, I'll pour tea ☕",
-  "Ask me instead of that assistant 🙄",
-  "The assistant or me? Pick one 😤",
-  "What's that chatbot got that I haven't? 😒",
   "I'm right here too, you know 👀",
   "You don't take me seriously, I'm just a cursor 🥲",
   "Suit yourself. Not saying a word... 😑",
@@ -227,6 +246,8 @@ export function Cursor() {
   const ringRef = useRef({ x: -100, y: -100 });
   const activeRef = useRef(false);
   const hoveringRef = useRef(false);
+  /** Whether the pointer is resting on a project card; picks the idle deck. */
+  const onProjectRef = useRef(false);
   const idleTimerRef = useRef<NodeJS.Timeout | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const lastIndexRef = useRef<number>(-1);
@@ -397,6 +418,11 @@ export function Cursor() {
 
     const pickScrollDown = makePicker(isEnglish ? SCROLL_DOWN_EN : SCROLL_DOWN_TR);
     const pickScrollUp = makePicker(isEnglish ? SCROLL_UP_EN : SCROLL_UP_TR);
+    /* Its own rotation, so moving on and off a card does not replay a line.
+       The general deck keeps its place independently of this one. */
+    const pickProject = makePicker(
+      isEnglish ? PROJECT_MESSAGES_EN : PROJECT_MESSAGES_TR
+    );
 
     let lastScrollY = window.scrollY;
     let lastScrollAt = performance.now();
@@ -439,9 +465,11 @@ export function Cursor() {
       }
 
       idleTimerRef.current = setTimeout(() => {
-        const nextIndex = getNextIndex();
         setBubbleZone(zoneRef.current);
-        setIdleMessage(messages[nextIndex]);
+        // Where the pointer came to rest decides which deck speaks.
+        setIdleMessage(
+          onProjectRef.current ? pickProject() : messages[getNextIndex()]
+        );
       }, 2500); // 2.5 seconds idle trigger
     };
 
@@ -475,6 +503,10 @@ export function Cursor() {
       const target = e.target as Element | null;
       const onChick = !!target?.closest?.('[data-cursor="chick"]');
       setOverChick(onChick);
+
+      onProjectRef.current = !!target?.closest?.(
+        '[data-cursor-context="project"]'
+      );
 
       const isHover =
         !onChick && !!target?.closest?.("a, button, [role='button']");

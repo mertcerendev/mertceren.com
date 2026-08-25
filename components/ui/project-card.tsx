@@ -73,6 +73,10 @@ export function ProjectCard({
       style={{ perspective: 1400 }}
     >
       <motion.article
+        /* Read by components/ui/cursor.tsx: resting here swaps the cursor's
+           idle deck for the project one, so the nudge to ask the assistant
+           arrives beside the button that does it. */
+        data-cursor-context="project"
         onPointerMove={onPointerMove}
         onPointerLeave={onPointerLeave}
         style={{

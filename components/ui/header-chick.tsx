@@ -21,7 +21,23 @@ const MOBILE_GAIT_FACTOR = 0.7;
 /** Matches Tailwind's `sm`, which is where the CSS side switches too. */
 const MOBILE_QUERY = "(max-width: 39.99rem)";
 const GREET_MS = 1800;
-const TURN_PAUSE = [420, 950] as const;
+/**
+ * It stops and turns to face the reader at each end of its runway and once on
+ * the way past the middle — the same front pose a greeting uses, without the
+ * heart. This replaced the old turn pause rather than being added to it: two
+ * stops in a row at the same spot read as a stumble.
+ */
+const GAZE_MS = 2400;
+/**
+ * The midpoint stop only earns its place when there is real walking either
+ * side of it, so it is skipped unless this many seconds separate it from
+ * each end. Measured: the runway is about 650px on a wide screen but only
+ * 155px on a phone, where the middle sits under two seconds from both ends —
+ * stopping there as well left the chick standing more than it walked.
+ * Compared against the live pace, so the slower mobile gait raises the bar
+ * rather than lowering it.
+ */
+const MIN_GAZE_GAP_S = 3;
 /**
  * Roughly every five seconds of walking it stops for a peck at the ground.
  * The window is loose so the rhythm never turns metronomic, and PECK_MS must
@@ -237,6 +253,10 @@ export function HeaderChick() {
   const shakeDirRef = useRef(0);
   const reversalsRef = useRef<number[]>([]);
   const queasyRef = useRef(false);
+  const gazeUntilRef = useRef(0);
+  const gazingRef = useRef(false);
+  /** One gaze per length of the runway, cleared on reaching either end. */
+  const midGazedRef = useRef(false);
   /** Read inside the frame loop, so it is a ref rather than state. */
   const speedRef = useRef(SPEED);
 
@@ -253,6 +273,7 @@ export function HeaderChick() {
    */
   const isEnglishRef = useRef(isEnglish);
 
+  const [gazing, setGazing] = useState(false);
   const [greeting, setGreeting] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [queasyMessage, setQueasyMessage] = useState<string | null>(null);
@@ -295,7 +316,10 @@ export function HeaderChick() {
     // The artwork faces right, so only walking left needs the flip. The
     // greeting pose faces front and is symmetrical, so it stays unflipped —
     // otherwise the mirror would throw the heart out to the wrong side.
-    const facing = greetingRef.current || queasyRef.current ? 1 : dirRef.current;
+    const facing =
+      greetingRef.current || queasyRef.current || gazingRef.current
+        ? 1
+        : dirRef.current;
     chick.style.transform = `translateX(${xRef.current}px) scaleX(${facing})`;
     chick.classList.toggle("chick-resting", resting);
 
@@ -421,7 +445,14 @@ export function HeaderChick() {
         const held =
           draggingRef.current || greetingRef.current || queasyRef.current;
         const pecking = now < peckUntilRef.current;
-        const resting = held || pecking || now < pausedUntilRef.current;
+        // Only on the edges, so the pose swap does not re-render every frame.
+        const isGazing = now < gazeUntilRef.current;
+        if (isGazing !== gazingRef.current) {
+          gazingRef.current = isGazing;
+          setGazing(isGazing);
+        }
+        const resting =
+          held || pecking || isGazing || now < pausedUntilRef.current;
 
         // First frame: start the clock rather than pecking immediately.
         if (!nextPeckAtRef.current) {
@@ -456,16 +487,27 @@ export function HeaderChick() {
             xRef.current += dirRef.current * step;
           }
         } else if (!resting && dt) {
-          xRef.current += dirRef.current * speedRef.current * (dt / 1000);
+          const step = speedRef.current * (dt / 1000);
+          xRef.current += dirRef.current * step;
 
           if (xRef.current >= max) {
             xRef.current = max;
             dirRef.current = -1;
-            pausedUntilRef.current = now + between(TURN_PAUSE);
+            midGazedRef.current = false;
+            gazeUntilRef.current = now + GAZE_MS;
           } else if (xRef.current <= 0) {
             xRef.current = 0;
             dirRef.current = 1;
-            pausedUntilRef.current = now + between(TURN_PAUSE);
+            midGazedRef.current = false;
+            gazeUntilRef.current = now + GAZE_MS;
+          } else if (
+            // A frame's travel wide, so the midpoint cannot be stepped over.
+            !midGazedRef.current &&
+            max / 2 >= speedRef.current * MIN_GAZE_GAP_S &&
+            Math.abs(xRef.current - max / 2) <= step
+          ) {
+            midGazedRef.current = true;
+            gazeUntilRef.current = now + GAZE_MS;
           } else if (now >= nextPeckAtRef.current) {
             peckUntilRef.current = now + PECK_MS;
             nextPeckAtRef.current = now + PECK_MS + between(PECK_EVERY);
@@ -543,6 +585,8 @@ export function HeaderChick() {
     // pause it may be standing in.
     peckUntilRef.current = 0;
     pausedUntilRef.current = 0;
+    // Food outranks admiring the reader.
+    gazeUntilRef.current = 0;
   };
 
   const positionFromPointer = (clientX: number) => {
@@ -631,6 +675,7 @@ export function HeaderChick() {
             setDragging(true);
             // Picked up mid-peck: drop the mouthful and reset the clock.
             peckUntilRef.current = 0;
+            gazeUntilRef.current = 0;
             nextPeckAtRef.current = performance.now() + between(PECK_EVERY);
             startGreeting();
           }}
@@ -648,7 +693,7 @@ export function HeaderChick() {
           }}
           className={`pointer-events-auto absolute bottom-0 left-0 touch-none select-none leading-none${queasyMessage ? " chick-queasy" : ""}`}
         >
-          {greeting || queasyMessage ? <ChickFront /> : <ChickSide />}
+          {greeting || queasyMessage || gazing ? <ChickFront /> : <ChickSide />}
 
           {greeting && (
             // Sits beside the head rather than above it: the track clips

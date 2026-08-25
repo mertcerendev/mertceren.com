@@ -37,8 +37,29 @@ export function CursorMuteToggle() {
     <button
       type="button"
       onClick={handleClick}
-      aria-label={isMuted ? (isEnglish ? "Unmute Speech Bubbles" : "Konuşma Balonlarını Aç") : (isEnglish ? "Mute Speech Bubbles" : "Konuşma Balonlarını Sustur")}
-      title={isMuted ? (isEnglish ? "Balonları Aç 🤪" : "Balonları Aç 🤪") : (isEnglish ? "Balonları Sustur 🤐" : "Balonları Sustur 🤐")}
+      /* Names the cursor specifically. "Mute speech bubbles" promised more
+         than it delivers: the chick keeps its bubbles, and rightly so — it
+         only ever speaks when someone feeds or shakes it, so the way to
+         silence it is to leave it alone. This switch is for the one that
+         talks unprompted. */
+      aria-label={
+        isMuted
+          ? isEnglish
+            ? "Unmute the cursor"
+            : "İmleci Konuştur"
+          : isEnglish
+          ? "Mute the cursor"
+          : "İmleci Sustur"
+      }
+      title={
+        isMuted
+          ? isEnglish
+            ? "Unmute the cursor 🤪"
+            : "İmleci Konuştur 🤪"
+          : isEnglish
+          ? "Mute the cursor 🤐"
+          : "İmleci Sustur 🤐"
+      }
       className={cn(
         "hidden md:flex size-9 items-center justify-center rounded-full border transition-all duration-300 cursor-pointer text-[1rem]",
         isMuted
