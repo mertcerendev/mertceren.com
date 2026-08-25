@@ -175,6 +175,22 @@ export function Certificates() {
     <section id="certificates" className="px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
       <SectionHeading index="05" label={copy.label} meta={copy.meta} />
 
+      {/* Under the heading's meta, the way About and Skills carry theirs.
+          Right-aligned even below sm, where the meta itself is hidden: it
+          still balances the index and label above it. */}
+      <div className="mt-4 flex justify-end">
+        <AskAiButton
+          prompt={
+            locale === "tr"
+              ? "Mert'in BTK Akademi, edX HP ve yapay zekâ sertifikaları hakkında özet bilgi verir misin?"
+              : "Can you summarize Mert's credentials from BTK Akademi, edX HP, and AI programs?"
+          }
+          label={locale === "tr" ? "Sertifikaları Asistana Sor" : "Ask AI about Credentials"}
+          size="sm"
+          variant="subtle"
+        />
+      </div>
+
       {/* 40px between cards on a phone, not 24. A 327px card with 24px under
           it gives the gap 7% of the card's own height, which is why the six
           of them read as one block rather than six things.
@@ -197,7 +213,7 @@ export function Certificates() {
         ))}
       </ul>
 
-      <div className="mt-10 flex flex-col items-center gap-4">
+      <div className="mt-10 flex justify-center">
         {certificates.length > FEATURED_COUNT && (
           <button
             type="button"
@@ -219,16 +235,6 @@ export function Certificates() {
             </svg>
           </button>
         )}
-        <AskAiButton
-          prompt={
-            locale === "tr"
-              ? "Mert'in BTK Akademi, edX HP ve yapay zekâ sertifikaları hakkında özet bilgi verir misin?"
-              : "Can you summarize Mert's credentials from BTK Akademi, edX HP, and AI programs?"
-          }
-          label={locale === "tr" ? "Sertifikaları Asistana Sor" : "Ask AI about Credentials"}
-          variant="subtle"
-          size="md"
-        />
       </div>
 
       {/* ALL CERTIFICATES MODAL */}
