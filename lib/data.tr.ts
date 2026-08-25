@@ -33,7 +33,7 @@ export const projects: Project[] = [
     year: "2026",
     category: "TEKNOFEST · Yapay Zekâ & 5G",
     description:
-      "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı bir yol güvenliği sistemi — destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı tespit modelleri. TEKNOFEST 2026 için 5Genç takımıyla geliştiriliyor.",
+      "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı bir yol güvenliği sistemi — destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı tespit modelleri. TEKNOFEST 2026 için 5Genç takımıyla geliştirildi.",
     tags: ["Python", "YOLOv11", "Bilgisayarlı Görü", "5G"],
     href: "#",
     image: "/projects/road-safety.png",
@@ -45,14 +45,15 @@ export const projects: Project[] = [
       facts: [
         { label: "Rol", value: "Takım Kaptanı, Proje Koordinatörü & AI/ML Mühendisi" },
         { label: "Takım", value: "5Genç" },
-        { label: "Aşama", value: "Geliştirme Aşamasında (TEKNOFEST 2026)" },
+        { label: "Aşama", value: "Tamamlandı (TEKNOFEST 2026)" },
+        { label: "Ölçülen F1", value: "0.716 — 0.250'den yükseldi" },
       ],
       challenge:
         "Destekli ve otonom sürüş sistemlerinin tehlikeleri — araçları, yayaları, beklenmedik engelleri — gerçek zamanlı görmesi gerekir; geç gelen bir tespit, hiç gelmemiş bir tespittir. Sistem, düşük gecikmeli 5G iletimini yol hızında anlam taşıyacak kadar hızlı görü modelleriyle birleştirmek zorundaydı.",
       approach:
-        "Algı katmanı doğrudan benim elimden çıkıyor: YOLO ailesi modelleri, senaryoya özel veri setleriyle Python'da eğitip yol hızında ayakta kalana kadar yineliyorum. Bu tespitleri taşıyan 5G tarafı takımın altyapı işi; kaptan olarak iki yarının nerede buluştuğunu koordine ediyorum — modeller ne üretiyor, ağ ne bekliyor ve teslim tarihi gerçekte nerede duruyor.",
+        "Algı katmanı doğrudan benim elimden çıktı: YOLO ailesi modellerini senaryoya özel veri setleriyle Python'da eğitip yol hızında ayakta kalana kadar yineledim. Tek bir model bütün etiketleri taşımak yerine tespit, ayrı ayrı eğitilen uzman modellere bölündü — bir model eklemek ya da çıkarmak koda değil, bir yapılandırma satırına dokunmak demekti. Bu tespitleri taşıyan 5G tarafı takımın altyapı işiydi; kaptan olarak iki yarının nerede buluştuğunu koordine ettim: modeller ne üretiyor, ağ ne bekliyor ve teslim tarihi gerçekte nerede duruyor.",
       outcome:
-        "Sistem üzerinde aktif geliştirme süreci devam etmekte olup, model eğitimleri ve 5G entegrasyonu aşamaları 5Genç takımıyla TEKNOFEST 2026 sezonu için hazırlanmaktadır. Gerçek zamanlı tespit başarım oranlarını artırmak için yeni senaryolar üzerinde çalışmaya devam ediyoruz.",
+        "Yarışma süreci Ağustos 2026'da tamamlandı. Turkcell'in doğrulama videosunda resmî ground truth'a karşı ölçülen sistem 0.716 F1 skoru aldı — üç yinelemede 0.250'den buraya geldi. Bu tırmanışın büyük kısmı yeniden eğitimden değil kalibrasyondan geldi; açıkçası aradığım yer orası değildi. Plaka modeli Tesla T4 üzerinde 0.992 mAP@50 değerini 113 FPS'te, internet kapalıyken ve on dakikalık bütçenin içinde tuttu.",
     },
   },
   {

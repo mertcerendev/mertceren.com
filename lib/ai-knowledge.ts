@@ -43,7 +43,7 @@ export const MERT_KNOWLEDGE = {
       category: "Yapay Zekâ & 5G Haberleşme",
       tech: ["Python", "YOLOv11", "Bilgisayarlı Görü", "5G Edge"],
       summary:
-        "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı yol güvenliği sistemi. Destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı nesne tespit modelleri. TEKNOFEST 2026 için 5Genç takımı bünyesinde geliştiriliyor.",
+        "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı yol güvenliği sistemi. Destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı nesne tespit modelleri. TEKNOFEST 2026 için 5Genç takımı bünyesinde geliştirildi; yarışma Ağustos 2026'da tamamlandı ve teslim edilen sistem resmî doğrulama verisinde 0.716 F1 skoru aldı.",
       href: "/work/smart-road-safety",
     },
     {
@@ -314,7 +314,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
   if (has("teknofest", "yol güvenliği", "road safety", "5genç", "5genc", "yolo", "yolov11", "kaptan", "captain")) {
     if (locale === "tr") {
       return {
-        text: "🚦 **Akıllı Yol Güvenliği (TEKNOFEST 2026 — 5Genç)**:\n\n• **Takım**: 5Genç (Takım Kaptanı: Mert Ceren)\n• **Mert'in Rolü**: Takım Kaptanı, Proje Koordinatörü & AI/ML Mühendisi\n• **Teknolojiler**: Python, YOLOv11, Bilgisayarlı Görü, 5G Düşük Gecikmeli İletim\n• **Aşama**: Geliştirme Aşamasında (TEKNOFEST 2026 Finalisti)\n\n**Nasıl Çalışıyor?**\nDestekli ve otonom sürüş senaryolarında yol üzerindeki araç, yaya ve engelleri tespit etmek için Python ortamında YOLOv11 modelleri eğitildi. Tespit edilen risk verileri 5G düşük gecikmeli iletişim altyapısıyla yol hızında araçlara ve kontrol merkezine aktarılıyor 🤖✨",
+        text: "🚦 **Akıllı Yol Güvenliği (TEKNOFEST 2026 — 5Genç)**:\n\n• **Takım**: 5Genç (Takım Kaptanı: Mert Ceren)\n• **Mert'in Rolü**: Takım Kaptanı, Proje Koordinatörü & AI/ML Mühendisi\n• **Teknolojiler**: Python, YOLOv11, Bilgisayarlı Görü, 5G Düşük Gecikmeli İletim\n• **Aşama**: Tamamlandı — Ağustos 2026 (TEKNOFEST 2026 Finalisti)\n• **Ölçülen Sonuç**: 0.716 F1 (0.250'den yükseldi)\n\n**Nasıl Çalışıyor?**\nDestekli ve otonom sürüş senaryolarında yol üzerindeki araç, yaya ve engelleri tespit etmek için Python ortamında YOLOv11 modelleri eğitildi. Tespit edilen risk verileri 5G düşük gecikmeli iletişim altyapısıyla yol hızında araçlara ve kontrol merkezine aktarılıyor 🤖✨",
         actionLinks: [
           { label: "Akıllı Yol Güvenliği Vaka İncelemesi ↗", href: "/work/smart-road-safety" },
           { label: "Ödüller & TEKNOFEST 🏆", href: "#awards", isAnchor: true },
@@ -322,7 +322,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
       };
     } else {
       return {
-        text: "🚦 **Smart Road Safety (TEKNOFEST 2026 — 5Genç)**:\n\n• **Team**: 5Genç (Team Captain: Mert Ceren)\n• **Mert's Role**: Team Captain, Project Coordinator & AI/ML Engineer\n• **Tech**: Python, YOLOv11, Computer Vision, Low-latency 5G\n• **Stage**: In Development (TEKNOFEST 2026 Finalist)\n\n**How it works:**\nPairs scenario-trained YOLOv11 vision models with low-latency 5G communication to detect hazards, vehicles, and pedestrians in real time for assisted and autonomous driving.",
+        text: "🚦 **Smart Road Safety (TEKNOFEST 2026 — 5Genç)**:\n\n• **Team**: 5Genç (Team Captain: Mert Ceren)\n• **Mert's Role**: Team Captain, Project Coordinator & AI/ML Engineer\n• **Tech**: Python, YOLOv11, Computer Vision, Low-latency 5G\n• **Stage**: Completed — August 2026 (TEKNOFEST 2026 Finalist)\n• **Measured result**: F1 0.716, up from 0.250\n\n**How it works:**\nPairs scenario-trained YOLOv11 vision models with low-latency 5G communication to detect hazards, vehicles, and pedestrians in real time for assisted and autonomous driving.",
         actionLinks: [
           { label: "View Smart Road Safety Case Study ↗", href: "/en/work/smart-road-safety" },
           { label: "Awards Section 🏆", href: "#awards", isAnchor: true },

@@ -73,14 +73,15 @@ export const projects: Project[] = [
       facts: [
         { label: "Role", value: "Team Captain, Project Coordinator & AI/ML Engineer" },
         { label: "Team", value: "5Genç" },
-        { label: "Stage", value: "In Development (TEKNOFEST 2026)" },
+        { label: "Stage", value: "Completed (TEKNOFEST 2026)" },
+        { label: "Measured F1", value: "0.716, up from 0.250" },
       ],
       challenge:
         "Assisted and autonomous driving systems need to see hazards — vehicles, pedestrians, unexpected obstacles — in real time, and a detection that arrives late is a detection that never happened. The system had to combine low-latency 5G transport with vision models fast enough to matter at road speed.",
       approach:
-        "The perception layer is my own hands-on work: YOLO-family models, trained and iterated in Python on scenario-specific datasets until they hold up at road speed. The 5G transport that carries those detections is the team's infrastructure side, and as captain I coordinate how the two halves meet — what the models emit, what the network expects, and where the deadline actually sits.",
+        "The perception layer was my own hands-on work: YOLO-family models, trained and iterated in Python on scenario-specific datasets until they held up at road speed. Rather than one model carrying every label, detection was split into separately trained experts — adding or removing one is a line in a config file, not a change to the code. The 5G transport carrying those detections was the team's infrastructure side, and as captain I coordinated where the two halves met: what the models emit, what the network expects, and where the deadline actually sat.",
       outcome:
-        "Active development is ongoing, focusing on training models and integrating low-latency 5G pipelines for the TEKNOFEST 2026 season. We are continuously testing new road scenarios to improve real-time detection accuracy.",
+        "The competition run closed in August 2026. Measured against the official ground truth on Turkcell's validation footage, the delivered system scored an F1 of 0.716 — up from 0.250 over three iterations. Most of that climb came from calibration rather than retraining, which is not where I expected to find it. The plate model reached mAP@50 0.992 at 113 FPS on a Tesla T4, with the machine offline and inside a ten-minute budget.",
     },
   },
   {
