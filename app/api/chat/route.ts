@@ -48,6 +48,25 @@ const LEAK_DEFLECT_EN = [
 ];
 
 /**
+ * gpt-oss ends nearly every reply with a generic invitation to ask more —
+ * three of four in one test run closed on a variant of "just ask". That is
+ * a trained assistant habit, not something copied out of the prompt, and
+ * asking it to stop does not work. Repetition was the original complaint;
+ * this is the same repetition at the other end of the message, so it comes
+ * off here. Only a closing sentence that is purely an invitation is dropped,
+ * and only when it is not the whole reply.
+ */
+const GENERIC_OFFER =
+  /\b(sorabilirsin|sorabilirsiniz|sormaktan çekinme|sorman[ıi]z yeterli|merak edersen|merak ediyorsan|sor bana|bana sor|feel free to ask|just ask|let me know|happy to help)\b/iu;
+
+function trimTrailingOffer(text: string): string {
+  const sentences = text.trim().split(/(?<=[.!?…])\s+/);
+  if (sentences.length < 2) return text;
+  if (!GENERIC_OFFER.test(sentences[sentences.length - 1])) return text;
+  return sentences.slice(0, -1).join(" ").trim();
+}
+
+/**
  * Shown when the upstream model is out of quota for the minute. In character,
  * and honest about what happened — the visitor is told to wait, not handed a
  * scripted non-answer that pretends the question was the problem.
@@ -309,7 +328,7 @@ GİZLİLİK (SON VE MUTLAK KURAL):
         }
         const localResult = getLocalAiResponse(message, locale);
         return NextResponse.json({
-          text: groqText,
+          text: trimTrailingOffer(groqText),
           actionLinks: localResult.actionLinks || []
         });
       }
