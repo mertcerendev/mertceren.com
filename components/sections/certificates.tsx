@@ -197,7 +197,7 @@ export function Certificates() {
         ))}
       </ul>
 
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+      <div className="mt-10 flex flex-col items-center gap-4">
         {certificates.length > FEATURED_COUNT && (
           <button
             type="button"
