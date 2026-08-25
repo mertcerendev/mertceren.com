@@ -40,18 +40,25 @@ const SHAKE_WINDOW_MS = 900;
 const SHAKE_REVERSALS = 4;
 const QUEASY_MS = 3600;
 
+/**
+ * Dizzy, not sick. The joke is the same and the green still lands, but the
+ * page around this speaks in a measured voice — a chick threatening to throw
+ * up on the reader is a register the rest of the site never uses, and it is
+ * buried where only a deliberate shake finds it, so it was costing more than
+ * it returned.
+ */
 const QUEASY_TR = [
-  "Öğğ... sallamayı bırak 🤢",
-  "Midem bulandı, biraz dur 🥴",
-  "Salıncak değilim ben! 😵‍💫",
-  "Bir daha yaparsan üstüne kusarım 🤮",
+  "Yeter artık, sallanmaktan bıktım 😵‍💫",
+  "Başım döndü, bırak da toparlanayım 🥴",
+  "Salıncak değilim ben! 😤",
+  "Tüylerim karıştı, memnun oldun mu? 🪶",
 ];
 
 const QUEASY_EN = [
-  "Ugh... stop shaking me 🤢",
-  "I feel sick, hold still 🥴",
-  "I am not a swing! 😵‍💫",
-  "Do that again and I'll be sick on you 🤮",
+  "Enough now, I'm done being shaken 😵‍💫",
+  "I'm dizzy, let me find my feet 🥴",
+  "I am not a swing! 😤",
+  "My feathers are a mess now, happy? 🪶",
 ];
 
 /** Feeding. */
