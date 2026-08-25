@@ -12,7 +12,7 @@ import { IdleMode } from "@/components/ui/idle-mode";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { AiAssistant } from "@/components/ui/ai-assistant";
 import { ContextMenu } from "@/components/ui/context-menu";
-import { getContent, isLocale, localePath, locales } from "@/lib/content";
+import { defaultLocale, getContent, isLocale, localePath, locales } from "@/lib/content";
 import "../globals.css";
 
 const syne = Syne({
@@ -119,19 +119,32 @@ export default async function RootLayout({
    * The name stays the plain one. This field is the name of the site, not a
    * headline, and Google drops values that read as a tagline; the role
    * already appears on the line below, which comes from <title>.
+   *
+   * No alternateName. Google says it leans on that field whenever it is not
+   * confident about the name, and the wordmark — "mertceren" — is the domain
+   * with the dot taken out. Offering it hands Google the very string the name
+   * is meant to replace.
+   *
+   * Root locale only. Site names are a domain-root feature: Google does not
+   * support them for subdirectories, so the copy of this entity that /en was
+   * publishing could not win the name, and a second home page claiming the
+   * root URL is one of the documented reasons the whole thing gets ignored.
    */
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
-      {
-        "@type": "WebSite",
-        "@id": `${site.url}#website`,
-        "name": profile.name,
-        "alternateName": profile.wordmark,
-        "url": site.url,
-        "inLanguage": lang,
-        "publisher": { "@id": `${site.url}#person` },
-      },
+      ...(lang === defaultLocale
+        ? [
+            {
+              "@type": "WebSite",
+              "@id": `${site.url}#website`,
+              "name": profile.name,
+              "url": site.url,
+              "inLanguage": lang,
+              "publisher": { "@id": `${site.url}#person` },
+            },
+          ]
+        : []),
       {
         "@type": "Person",
         "@id": `${site.url}#person`,
