@@ -57,12 +57,20 @@ const LEAK_DEFLECT_EN = [
  * and only when it is not the whole reply.
  */
 const GENERIC_OFFER =
-  /\b(sorabilirsin|sorabilirsiniz|sormaktan çekinme|sorman[ıi]z yeterli|merak edersen|merak ediyorsan|sor bana|bana sor|feel free to ask|just ask|let me know|happy to help)\b/iu;
+  /\b(sorabilirsin|sorabilirsiniz|sormaktan çekinme|sormak istersen|sorun?uz varsa|merak edersen|merak ediyorsan|merak ett|aklına takıl|sor bana|bana sor|yardımcı olabilirim|memnuniyetle yanıtlarım|feel free to ask|just ask|let me know|happy to help)\b/iu;
+
+/**
+ * Three of the five offers one run produced opened this way while wording
+ * the invitation differently every time, so the opening is the reliable
+ * signal, not the verb.
+ */
+const OFFER_OPENING = /^\s*(başka|ayrıca|dilersen|istersen|anything else)\b/iu;
 
 function trimTrailingOffer(text: string): string {
   const sentences = text.trim().split(/(?<=[.!?…])\s+/);
   if (sentences.length < 2) return text;
-  if (!GENERIC_OFFER.test(sentences[sentences.length - 1])) return text;
+  const last = sentences[sentences.length - 1];
+  if (!GENERIC_OFFER.test(last) && !OFFER_OPENING.test(last)) return text;
   return sentences.slice(0, -1).join(" ").trim();
 }
 
