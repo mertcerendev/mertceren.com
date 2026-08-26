@@ -48,6 +48,7 @@ function CertificateCard({ certificate, index, viewLabel, onSelect }: CardProps)
       viewport={{ once: true, margin: "-10% 0px" }}
       transition={{ duration: 0.5, delay: index * 0.05, ease: EASE }}
       onClick={() => onSelect(certificate)}
+      data-detect="document"
       className="group relative flex cursor-pointer flex-col justify-between gap-4 rounded-2xl border hairline bg-surface/50 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-lg hover:shadow-accent/5"
     >
       <div className="flex items-start gap-4">
