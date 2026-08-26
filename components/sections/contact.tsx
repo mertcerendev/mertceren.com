@@ -43,8 +43,14 @@ export function Contact() {
     };
   }, [isCvModalOpen]);
 
+  /* Same rhythm as every other section. This one carried py-28/py-40 against
+     their py-24/py-32, which put 32px of extra nothing above the heading —
+     and since the nav drops the section's top edge at the top of the
+     viewport, that dead space came straight off the bottom: on a 720px
+     window the address button ended 641px down, right on the edge, and on a
+     shorter laptop it fell off it. */
   return (
-    <section id="contact" className="px-5 py-28 sm:px-8 sm:py-40 lg:px-12">
+    <section id="contact" className="px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
       <SectionHeading
         index="07"
         label={ui.sections.contact.label}
