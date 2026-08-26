@@ -723,7 +723,6 @@ export function HeaderChick() {
         <div
           ref={chickRef}
           data-cursor="chick"
-          data-detect="chick"
           data-dragging={dragging ? "true" : undefined}
           style={
             {

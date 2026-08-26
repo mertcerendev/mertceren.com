@@ -49,7 +49,6 @@ export function About() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-10% 0px" }}
             transition={{ duration: 1, delay: 0.2 }}
-            data-detect="person"
             className="relative mt-10 flex aspect-[5/4] max-w-sm flex-col justify-between overflow-hidden rounded-2xl border hairline bg-surface p-6 group/portrait text-white"
           >
             {profile.image && (

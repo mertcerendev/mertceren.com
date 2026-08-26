@@ -77,7 +77,6 @@ export function ProjectCard({
            idle deck for the project one, so the nudge to ask the assistant
            arrives beside the button that does it. */
         data-cursor-context="project"
-        data-detect="project"
         onPointerMove={onPointerMove}
         onPointerLeave={onPointerLeave}
         style={{

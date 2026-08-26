@@ -10,7 +10,6 @@ import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageToggle } from "@/components/layout/language-toggle";
 import { HeaderChick } from "@/components/ui/header-chick";
 import { CursorMuteToggle } from "@/components/ui/cursor-mute-toggle";
-import { DetectToggle } from "@/components/ui/detect-toggle";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -100,7 +99,6 @@ export function Header() {
           <a
             href="#main"
             onClick={goTop}
-            data-detect="logo"
             aria-label={`${profile.wordmark}. ${profile.name} — ${ui.backToTopAria}`}
             className="tap-target font-display text-lg font-extrabold lowercase tracking-tight"
           >
@@ -164,7 +162,6 @@ export function Header() {
                 come to the full 375px with nothing between the wordmark and
                 the language link; this is the most secondary of them, so it
                 moves into the menu below sm instead of crowding the row. */}
-            <DetectToggle className="hidden sm:flex" />
             <CursorMuteToggle className="hidden sm:flex" />
 
             <button
@@ -238,7 +235,6 @@ export function Header() {
             {/* The header's copy stops below sm; this one takes over there,
                 so the control is reachable on a phone without sitting in the
                 top row. Hidden from sm up, where the header carries it. */}
-            <DetectToggle className="sm:hidden" />
             <CursorMuteToggle className="sm:hidden" />
           </div>
         </div>

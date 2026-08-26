@@ -12,7 +12,6 @@ import { IdleMode } from "@/components/ui/idle-mode";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { AiAssistant } from "@/components/ui/ai-assistant";
 import { ContextMenu } from "@/components/ui/context-menu";
-import { DetectOverlay } from "@/components/ui/detect-overlay";
 import { defaultLocale, getContent, isLocale, localePath, locales } from "@/lib/content";
 import "../globals.css";
 
@@ -204,7 +203,6 @@ export default async function RootLayout({
               <Cursor />
               <IdleMode />
               <ContextMenu />
-              <DetectOverlay />
             </SmoothScroll>
           </ThemeProvider>
         </LocaleProvider>
