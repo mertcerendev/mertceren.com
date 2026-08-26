@@ -55,11 +55,29 @@ export function ProjectCard({
     const py = (e.clientY - rect.top) / rect.height - 0.5;
     tiltX.set(-py * 3);
     tiltY.set(px * 3);
+
+    /* The light moves with the tilt. The card already turned under the
+       pointer, but its highlights stayed where they were painted, and a
+       surface whose lighting does not change as it turns reads as printed
+       paper rather than as an object. Written as custom properties straight
+       to the node — the gradient below interpolates them, so this costs no
+       React work at all. */
+    e.currentTarget.style.setProperty(
+      "--mx",
+      `${(((e.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`
+    );
+    e.currentTarget.style.setProperty(
+      "--my",
+      `${(((e.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`
+    );
   };
 
-  const onPointerLeave = () => {
+  const onPointerLeave = (e: React.PointerEvent<HTMLElement>) => {
     tiltX.set(0);
     tiltY.set(0);
+    // Back to where the artwork was composed, not to the centre.
+    e.currentTarget.style.removeProperty("--mx");
+    e.currentTarget.style.removeProperty("--my");
   };
 
   return (
@@ -93,8 +111,14 @@ export function ProjectCard({
           className="absolute inset-0 scale-100 transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
           style={{
             background: [
-              `radial-gradient(110% 90% at 12% 12%, ${palette.from} 0%, transparent 55%)`,
-              `radial-gradient(95% 85% at 88% 25%, ${palette.via} 0%, transparent 62%)`,
+              // The two upper lights track the pointer; the third is the
+              // ground colour and stays put, or the card would look untethered.
+              `radial-gradient(110% 90% at var(--mx, 12%) var(--my, 12%), ${palette.from} 0%, transparent 55%)`,
+              // Mirrored, so the two lights swing apart rather than together.
+              // The fallbacks differ between the two gradients on purpose:
+              // unset, each resolves to the position the artwork was
+              // originally composed at (12%/12% and 88%/25%).
+              `radial-gradient(95% 85% at calc(100% - var(--mx, 12%)) calc(100% - var(--my, 75%)), ${palette.via} 0%, transparent 62%)`,
               `radial-gradient(130% 130% at 50% 105%, ${palette.to} 0%, #0a0a0b 100%)`,
               "#0a0a0b",
             ].join(", "),
