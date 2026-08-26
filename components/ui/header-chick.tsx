@@ -105,6 +105,34 @@ const FOOD_W = 16;
  */
 const GROUND_H = 18;
 
+/**
+ * One line, once a session, on phones only.
+ *
+ * On a desktop the cursor does the talking and the chick only ever answers
+ * when it is fed or shaken — deliberately, so two characters are not nagging
+ * at once. A phone has no cursor, so none of that reaches it: the chick is
+ * the only character there, and nobody finds it, because on a phone you
+ * never touch the header. This is the introduction, not a running
+ * commentary. It fires after the preloader clears, says one thing, and does
+ * not speak again unless spoken to.
+ */
+const GREET_KEY = "mert_chick_greeted";
+/** After the 1650ms preloader, with a beat for the page to settle. */
+const GREET_AT_MS = 2100;
+const GREET_SHOW_MS = 3400;
+
+const GREET_TR = [
+  "Merhaba! Beni sürükleyebilirsin 👋",
+  "Hoş geldin! Yere dokun, yem çıkar 🌾",
+  "Selam 🐥 Buralardayım işte",
+];
+
+const GREET_EN = [
+  "Hello! You can drag me around 👋",
+  "Welcome! Tap the ground for seeds 🌾",
+  "Hi 🐥 Just pottering about",
+];
+
 const THANKS_TR = [
   "Mmm, teşekkürler! 🌾",
   "Tam da acıkmıştım 😋",
@@ -259,6 +287,9 @@ export function HeaderChick() {
   const midGazedRef = useRef(false);
   /** Read inside the frame loop, so it is a ref rather than state. */
   const speedRef = useRef(SPEED);
+  const isMobileRef = useRef(false);
+  const introTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [introMessage, setIntroMessage] = useState<string | null>(null);
 
   const groundRef = useRef<HTMLDivElement>(null);
   const groundWidthRef = useRef(-1);
@@ -323,10 +354,17 @@ export function HeaderChick() {
     chick.style.transform = `translateX(${xRef.current}px) scaleX(${facing})`;
     chick.classList.toggle("chick-resting", resting);
 
-    // The complaint bubble lives outside the clipped strip, so it has to be
-    // moved to match rather than riding along inside the chick.
-    if (bubbleRef.current) {
-      bubbleRef.current.style.transform = `translateX(${xRef.current}px)`;
+    // The bubble lives outside the clipped strip, so it has to be moved to
+    // match rather than riding along inside the chick. Held inside the track:
+    // it does not wrap, so a chick near the right-hand end would otherwise
+    // push its own speech off the side of the screen — most visible on a
+    // phone, where the runway is 155px and the bubble is wider than that.
+    const bubble = bubbleRef.current;
+    if (bubble) {
+      const room = trackRef.current
+        ? Math.max(0, trackRef.current.clientWidth - bubble.offsetWidth)
+        : xRef.current;
+      bubble.style.transform = `translateX(${Math.min(xRef.current, room)}px)`;
     }
   };
 
@@ -395,6 +433,7 @@ export function HeaderChick() {
   useEffect(() => {
     const mq = window.matchMedia(MOBILE_QUERY);
     const sync = () => {
+      isMobileRef.current = mq.matches;
       speedRef.current = mq.matches ? SPEED * MOBILE_GAIT_FACTOR : SPEED;
     };
     sync();
@@ -428,6 +467,36 @@ export function HeaderChick() {
 
     sync();
     return () => observer.disconnect();
+  }, []);
+
+  /**
+   * Runs once. Anything that would make it unwelcome — a desktop, where the
+   * cursor already talks; do-not-disturb; a session that has already had it —
+   * and it simply never speaks. The gaze is set through the same ref the walk
+   * loop reads, so the chick stops and turns to face the reader as it does.
+   */
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!isMobileRef.current) return;
+      try {
+        if (sessionStorage.getItem(GREET_KEY) === "1") return;
+        if (localStorage.getItem("mert_cursor_muted") === "true") return;
+        sessionStorage.setItem(GREET_KEY, "1");
+      } catch {
+        return; // Private mode and the like: skip it rather than repeat it.
+      }
+
+      const pool = isEnglishRef.current ? GREET_EN : GREET_TR;
+      setIntroMessage(pool[Math.floor(Math.random() * pool.length)]);
+      gazeUntilRef.current = performance.now() + GREET_SHOW_MS;
+
+      introTimerRef.current = setTimeout(
+        () => setIntroMessage(null),
+        GREET_SHOW_MS
+      );
+    }, GREET_AT_MS);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -536,6 +605,7 @@ export function HeaderChick() {
       if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
       if (queasyTimerRef.current) clearTimeout(queasyTimerRef.current);
       if (thanksTimerRef.current) clearTimeout(thanksTimerRef.current);
+      if (introTimerRef.current) clearTimeout(introTimerRef.current);
     },
     []
   );
@@ -710,12 +780,12 @@ export function HeaderChick() {
 
       {/* One bubble for both moods — they never overlap, and paint() moves
           whichever is up, since it lives outside the clipped strip. */}
-      {(queasyMessage ?? thanksMessage) && (
+      {(queasyMessage ?? thanksMessage ?? introMessage) && (
         <div
           ref={bubbleRef}
           className="absolute left-0 top-full mt-1 whitespace-nowrap rounded-xl border border-accent/30 bg-background/95 px-3 py-1.5 text-xs font-medium text-foreground shadow-xl backdrop-blur-md"
         >
-          {queasyMessage ?? thanksMessage}
+          {queasyMessage ?? thanksMessage ?? introMessage}
         </div>
       )}
     </div>

@@ -106,7 +106,13 @@ export function Header() {
             <span className="text-accent">.</span>
           </a>
 
-          <div className="flex items-center gap-3 sm:gap-6">
+          {/* gap-2 below sm, not gap-3: the do-not-disturb toggle joined this
+              row on phones and the group grew into the wordmark, leaving them
+              touching at 375px. Tightening the cluster's own spacing buys the
+              12px back, and keeps the gap to the wordmark wider than the gaps
+              inside the cluster — so it still reads as a wordmark and then a
+              set of controls, rather than one undifferentiated row. */}
+          <div className="flex items-center gap-2 sm:gap-6">
             <nav aria-label="Primary" className="hidden items-center gap-5 lg:flex xl:gap-7">
               {navItems.map((item) => (
                 <a
@@ -152,7 +158,11 @@ export function Header() {
 
             <LanguageToggle />
             <ThemeToggle />
-            <CursorMuteToggle />
+            {/* Not on the narrowest phones. Four controls plus the wordmark
+                come to the full 375px with nothing between the wordmark and
+                the language link; this is the most secondary of them, so it
+                moves into the menu below sm instead of crowding the row. */}
+            <CursorMuteToggle className="hidden sm:flex" />
 
             <button
               type="button"
@@ -220,7 +230,13 @@ export function Header() {
           <a href={`mailto:${profile.email}`} className="tap-target font-mono hover:text-accent transition-colors">
             {profile.email}
           </a>
-          <p className="font-mono">{profile.location}</p>
+          <div className="flex items-center justify-between gap-4">
+            <p className="font-mono">{profile.location}</p>
+            {/* The header's copy stops below sm; this one takes over there,
+                so the control is reachable on a phone without sitting in the
+                top row. Hidden from sm up, where the header carries it. */}
+            <CursorMuteToggle className="sm:hidden" />
+          </div>
         </div>
       </div>
     </>

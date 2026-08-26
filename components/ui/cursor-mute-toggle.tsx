@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export function CursorMuteToggle() {
+export function CursorMuteToggle({ className }: { className?: string }) {
   const pathname = usePathname() ?? "/";
   const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
 
@@ -37,34 +37,37 @@ export function CursorMuteToggle() {
     <button
       type="button"
       onClick={handleClick}
-      /* Names the cursor specifically. "Mute speech bubbles" promised more
-         than it delivers: the chick keeps its bubbles, and rightly so — it
-         only ever speaks when someone feeds or shakes it, so the way to
-         silence it is to leave it alone. This switch is for the one that
-         talks unprompted. */
+      /* One flag, three things: the cursor's bubbles, the idle overlay that
+         dims the page, and the chick's one greeting on a phone. Naming any
+         of them individually gets it wrong somewhere — "mute the cursor" is
+         a lie on a phone, where there is no cursor and the switch still does
+         two jobs. What they have in common is that they all speak without
+         being asked, so the switch is named for that. Feeding the chick still
+         gets an answer: this is not a gag, it is do-not-disturb. */
       aria-label={
         isMuted
           ? isEnglish
-            ? "Unmute the cursor"
-            : "İmleci Konuştur"
+            ? "Turn off do not disturb"
+            : "Rahatsız Etmeyi Kapat"
           : isEnglish
-          ? "Mute the cursor"
-          : "İmleci Sustur"
+          ? "Do not disturb"
+          : "Rahatsız Etme"
       }
       title={
         isMuted
           ? isEnglish
-            ? "Unmute the cursor 🤪"
-            : "İmleci Konuştur 🤪"
+            ? "Turn off do not disturb 🤪"
+            : "Rahatsız Etmeyi Kapat 🤪"
           : isEnglish
-          ? "Mute the cursor 🤐"
-          : "İmleci Sustur 🤐"
+          ? "Do not disturb 🤐"
+          : "Rahatsız Etme 🤐"
       }
       className={cn(
-        "hidden md:flex size-9 items-center justify-center rounded-full border transition-all duration-300 cursor-pointer text-[1rem]",
+        "flex size-9 items-center justify-center rounded-full border transition-all duration-300 cursor-pointer text-[1rem]",
         isMuted
           ? "border-amber-500/60 bg-amber-500/15 text-amber-400 hover:border-amber-500"
-          : "hairline bg-surface/40 text-foreground hover:border-foreground/40"
+          : "hairline bg-surface/40 text-foreground hover:border-foreground/40",
+        className
       )}
     >
       <span>{isMuted ? "🤐" : "🤪"}</span>

@@ -504,3 +504,27 @@ html.custom-cursor [data-cursor="chick"][data-dragging="true"] * {
 
 /* Animations run for everyone by design — prefers-reduced-motion is
    intentionally not honored (owner's decision, 2026-07-03). */
+
+/* Touch gets no hover — Tailwind v4 withholds those styles from it on
+   purpose, which is right, but it leaves a tap with no answer at all until
+   the page changes. This is the answer: one rule for every control rather
+   than an `active:` on each of the hundred-odd call sites, scoped to coarse
+   pointers so the mouse keeps the hover language it already has.
+
+   `scale` and not `transform: scale()`. Tailwind v4 writes translate and
+   rotate as standalone properties, so a transform here would wipe whatever
+   a component had already set on the same element — see the magnetic
+   wrappers and the mobile menu's slide-in.
+
+   No transition, deliberately. Adding one would mean a `transition-property`
+   that overrides the `transition-colors` these elements already carry, and a
+   press should land the instant the finger does. */
+@media (pointer: coarse) {
+  a:active,
+  button:active,
+  summary:active,
+  [role="button"]:active {
+    scale: 0.97;
+    opacity: 0.86;
+  }
+}
