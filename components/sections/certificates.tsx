@@ -10,8 +10,13 @@ import type { Certificate } from "@/lib/data";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-/** How many featured cards show on the main page. */
-const FEATURED_COUNT = 6;
+/**
+ * Half the collection, shown inline. Twelve rather than ten because it fills
+ * both grids exactly — four rows of three from lg, six rows of two at sm —
+ * where ten leaves a single card alone on the last row of the wide layout.
+ * The rest are a button away.
+ */
+const FEATURED_COUNT = 12;
 
 const STOPWORDS = new Set(["ve", "and", "of", "the", "for"]);
 
@@ -172,7 +177,7 @@ export function Certificates() {
   const featured = certificates.slice(0, FEATURED_COUNT);
 
   return (
-    <section id="certificates" className="px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
+    <section id="certificates" className="px-5 pb-16 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:px-12">
       <SectionHeading index="05" label={copy.label} meta={copy.meta} />
 
       {/* Under the heading's meta, the way About and Skills carry theirs.
@@ -192,16 +197,16 @@ export function Certificates() {
       </div>
 
       {/* 40px between cards on a phone, not 24. A 327px card with 24px under
-          it gives the gap 7% of the card's own height, which is why the six
-          of them read as one block rather than six things.
+          it gives the gap 7% of the card's own height, which is why they read
+          as one block rather than as separate things.
 
-          Three of them on a phone, six from sm up. One card per row means six
-          of them is six screens of the same card, which is the repetition the
-          owner was seeing; the button below already leads to all 22. Hidden in
+          Four on a phone, twelve from sm up. The phone lays them out one per
+          row, so twelve of them would be twelve screens of the same card —
+          the repetition the owner was seeing when this showed six. Hidden in
           CSS rather than sliced in JS so the server and the client render the
-          same list, and the thumbnails are lazy so the three that are hidden
+          same list, and the thumbnails are lazy, so the eight that are hidden
           cost nothing to fetch. */}
-      <ul className="mt-10 grid gap-10 [&>*:nth-child(n+4)]:hidden sm:grid-cols-2 sm:gap-6 sm:[&>*:nth-child(n+4)]:flex lg:grid-cols-3">
+      <ul className="mt-10 grid gap-10 [&>*:nth-child(n+5)]:hidden sm:grid-cols-2 sm:gap-6 sm:[&>*:nth-child(n+5)]:flex lg:grid-cols-3">
         {featured.map((certificate, i) => (
           <CertificateCard
             key={`${certificate.issued}-${certificate.title}`}
@@ -213,7 +218,12 @@ export function Certificates() {
         ))}
       </ul>
 
-      <div className="mt-10 flex justify-center">
+      {/* Centred in the space below the grid rather than tucked under it.
+          The gap above and the section's bottom padding are now equal — 64px
+          on a phone, 80px from sm — so the button reads as sitting in the
+          trailing space rather than clinging to the last row. The section is
+          no taller than it was; the space either side was only redistributed. */}
+      <div className="mt-16 flex justify-center sm:mt-20">
         {certificates.length > FEATURED_COUNT && (
           <button
             type="button"
