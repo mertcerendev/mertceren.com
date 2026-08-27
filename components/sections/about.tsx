@@ -144,7 +144,9 @@ export function About() {
                       <p className="text-sm text-muted">
                         {entry.place} · {entry.summary}
                       </p>
-                      {/* Detail expands on hover / keyboard focus */}
+                      {/* Detail expands on hover, on keyboard focus, and on
+                          a tap — a tabIndex element takes focus from touch,
+                          so :focus-within already covered the phone. */}
                       <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-within:grid-rows-[1fr] group-hover:grid-rows-[1fr]">
                         <div className="overflow-hidden">
                           <p className="max-w-lg pt-3 text-sm leading-relaxed text-foreground/80">
@@ -153,6 +155,30 @@ export function About() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Touch gets no hover, so nothing on the row said it
+                        opened; the detail sat there unreachable in practice
+                        because nobody knew to tap. Coarse pointers only - on
+                        a mouse the row opens as the cursor passes over it and
+                        a permanent chevron would be clutter.
+
+                        transition-[rotate,color], not transform: Tailwind v4
+                        writes rotate as its own property, so a transform
+                        transition here would animate nothing. */}
+                    <span
+                      aria-hidden
+                      className="mt-1.5 hidden shrink-0 text-muted transition-[rotate,color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-focus-within:rotate-180 group-focus-within:text-accent pointer-coarse:block"
+                    >
+                      <svg
+                        className="size-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={1.75}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </span>
                   </div>
                 </div>
               </motion.li>
