@@ -1,6 +1,6 @@
 "use client";
 
-import { ViewTransition } from "react";
+import { ViewTransition, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -42,6 +42,52 @@ export function ProjectCard({
   const locale = useLocale();
   const { ui } = useContent();
 
+  const cardRef = useRef<HTMLElement>(null);
+
+  /**
+   * Touch got none of the lighting. The two upper lights in the artwork
+   * are placed by --mx/--my, which only the mouse handler below ever
+   * wrote, so on a phone the card was lit exactly where it was composed
+   * and stayed that way for the whole scroll.
+   *
+   * Scroll moves them instead, across exactly the screenful this card is
+   * pinned for - which is the whole time a phone reader is looking at it.
+   *
+   * Measured off the stack rather than off the card. The card's own
+   * wrapper is sticky, so its rect top is clamped at 0 for the entire
+   * pinned phase and cannot see it; the stack above it keeps moving, and
+   * card i owns the i'th screenful of it. Same idiom the certificates band
+   * uses. Written straight to the node, as the mouse path is - no React
+   * work per frame.
+   */
+  useEffect(() => {
+    if (window.matchMedia("(pointer: fine)").matches) return;
+    const el = cardRef.current;
+    const stack = el?.parentElement?.parentElement;
+    if (!el || !stack) return;
+
+    let frame = 0;
+    const paint = () => {
+      frame = 0;
+      const vh = window.innerHeight;
+      const scrolled = -stack.getBoundingClientRect().top;
+      const t = Math.min(1, Math.max(0, (scrolled - index * vh) / vh));
+      el.style.setProperty("--mx", (12 + t * 68).toFixed(1) + "%");
+      el.style.setProperty("--my", (10 + t * 58).toFixed(1) + "%");
+    };
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    paint();
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [index]);
+
   // Subtle pointer-driven 3D tilt (mouse only)
   const tiltX = useMotionValue(0);
   const tiltY = useMotionValue(0);
@@ -75,7 +121,10 @@ export function ProjectCard({
   const onPointerLeave = (e: React.PointerEvent<HTMLElement>) => {
     tiltX.set(0);
     tiltY.set(0);
-    // Back to where the artwork was composed, not to the centre.
+    if (e.pointerType !== "mouse") return;
+    // Back to where the artwork was composed, not to the centre. Mouse only:
+    // on touch these two are the scroll sweep below, and a tap fires
+    // pointerleave, which would wipe them until the next scroll frame.
     e.currentTarget.style.removeProperty("--mx");
     e.currentTarget.style.removeProperty("--my");
   };
@@ -91,6 +140,7 @@ export function ProjectCard({
       style={{ perspective: 1400 }}
     >
       <motion.article
+        ref={cardRef}
         /* Read by components/ui/cursor.tsx: resting here swaps the cursor's
            idle deck for the project one, so the nudge to ask the assistant
            arrives beside the button that does it. */
@@ -140,7 +190,7 @@ export function ProjectCard({
         {/* Floating project mockup window */}
         {project.image && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none md:left-1/3 z-10 flex items-end justify-end">
-            <div className="relative w-full h-[60%] md:h-[70%] max-w-[480px] mr-[-5%] mb-[-4%] translate-y-[8%] rotate-[-4deg] group-hover:translate-y-[3%] group-hover:rotate-[-2deg] transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] opacity-75 group-hover:opacity-95">
+            <div className="relative w-full h-[60%] md:h-[70%] max-w-[480px] mr-[-5%] mb-[-4%] translate-y-[8%] rotate-[-4deg] group-hover:translate-y-[3%] group-hover:rotate-[-2deg] pointer-coarse:translate-y-[3%] pointer-coarse:rotate-[-2deg] transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] opacity-75 group-hover:opacity-95 pointer-coarse:opacity-95">
               {/* Browser frame mockup wrapper */}
               <div className="w-full h-full rounded-tl-xl border border-white/15 bg-[#141416]/90 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col">
                 {/* Browser address bar */}
