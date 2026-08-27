@@ -177,7 +177,7 @@ export function Certificates() {
   const featured = certificates.slice(0, FEATURED_COUNT);
 
   return (
-    <section id="certificates" className="px-5 pb-16 pt-24 sm:px-8 sm:pb-20 sm:pt-32 lg:px-12">
+    <section id="certificates" className="px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
       <SectionHeading index="05" label={copy.label} meta={copy.meta} />
 
       {/* Under the heading's meta, the way About and Skills carry theirs.
@@ -218,12 +218,11 @@ export function Certificates() {
         ))}
       </ul>
 
-      {/* Centred in the space below the grid rather than tucked under it.
-          The gap above and the section's bottom padding are now equal — 64px
-          on a phone, 80px from sm — so the button reads as sitting in the
-          trailing space rather than clinging to the last row. The section is
-          no taller than it was; the space either side was only redistributed. */}
-      <div className="mt-16 flex justify-center sm:mt-20">
+      {/* Tucked close under the last row — 24px on a phone, 32px from sm.
+          Centring it in the trailing space was tried and read as detached:
+          the way through to the other twelve belongs to the grid above it,
+          not to the gap before the next section. */}
+      <div className="mt-6 flex justify-center sm:mt-8">
         {certificates.length > FEATURED_COUNT && (
           <button
             type="button"
