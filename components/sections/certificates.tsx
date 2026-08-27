@@ -238,8 +238,15 @@ export function Certificates() {
   const copy = ui.sections.certificates;
   const featured = certificates.slice(0, FEATURED_COUNT);
 
+  /*
+   * No bottom padding, unlike every other section. The band's pinned box is a
+   * full screen tall with its content centred in it, so it already ends with
+   * roughly 126px of its own space below the button. Adding the usual 128 on
+   * top of that put 527px between this section and the next where the rest of
+   * the page runs about 400 — which is the gap that read as a hole.
+   */
   return (
-    <section id="certificates" className="px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
+    <section id="certificates" className="px-5 pb-0 pt-24 sm:px-8 sm:pt-32 lg:px-12">
       <SectionHeading index="05" label={copy.label} meta={copy.meta} />
 
       {/* Under the heading's meta, the way About and Skills carry theirs.
