@@ -301,36 +301,38 @@ export function Certificates() {
           <div className="mx-5 mt-8 h-px bg-line sm:mx-8 lg:mx-12">
             <div ref={bandBarRef} className="h-px w-0 bg-accent" />
           </div>
+          {/* Pinned with the band rather than waiting below it. The section
+              is several screens tall and holds you there while the cards go
+              past; a way out that only appears once you have scrolled to the
+              end is a way out you cannot see when you want it. Inset back
+              from the wrapper's negative margins, which exist to let the row
+              bleed to the edges. */}
+          <div className="mx-5 mt-10 flex justify-center sm:mx-8 lg:mx-12">
+            {certificates.length > FEATURED_COUNT && (
+              <button
+                type="button"
+                onClick={() => setIsAllModalOpen(true)}
+                className="microlabel group relative inline-flex items-center gap-2 rounded-full border hairline px-8 py-3.5 text-sm font-semibold text-foreground transition-all duration-300 hover:border-accent hover:bg-accent hover:text-accent-ink hover:shadow-lg hover:shadow-accent/10 cursor-pointer"
+              >
+                <span>
+                  {locale === "tr"
+                    ? `Tüm Sertifikaları İncele (${certificates.length})`
+                    : `Explore All Credentials (${certificates.length})`}
+                </span>
+                <svg
+                  className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Tucked close under the last row — 24px on a phone, 32px from sm.
-          Centring it in the trailing space was tried and read as detached:
-          the way through to the other twelve belongs to the grid above it,
-          not to the gap before the next section. */}
-      <div className="mt-6 flex justify-center sm:mt-8">
-        {certificates.length > FEATURED_COUNT && (
-          <button
-            type="button"
-            onClick={() => setIsAllModalOpen(true)}
-            className="microlabel group relative inline-flex items-center gap-2 rounded-full border hairline px-8 py-3.5 text-sm font-semibold text-foreground transition-all duration-300 hover:border-accent hover:bg-accent hover:text-accent-ink hover:shadow-lg hover:shadow-accent/10 cursor-pointer"
-          >
-            <span>
-              {locale === "tr"
-                ? `Tüm Sertifikaları İncele (${certificates.length})`
-                : `Explore All Credentials (${certificates.length})`}
-            </span>
-            <svg
-              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </button>
-        )}
-      </div>
 
       {/* ALL CERTIFICATES MODAL */}
       <AnimatePresence>
