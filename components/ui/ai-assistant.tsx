@@ -62,29 +62,49 @@ function TypewriterText({
   isTyping: boolean;
   onComplete?: () => void;
 }) {
-  const [displayed, setDisplayed] = useState(isTyping ? "" : text);
+  /* How far the current run has got, and which text it belongs to. The two
+     travel together so a new message cannot render the previous run’s count
+     against the new string for a frame. */
+  const [run, setRun] = useState({ text, shown: 0 });
+
+  /* onComplete arrives as an inline arrow, so it is a new function on every
+     render of the parent. In the dependency array it would tear down and
+     restart the interval each time and the message would never finish
+     typing; held in a ref, the effect can stay keyed to the text alone and
+     still call the latest one. */
+  const onCompleteRef = useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  });
 
   useEffect(() => {
-    if (!isTyping) {
-      setDisplayed(text);
-      return;
-    }
+    // Nothing to run when the text is not being typed out; the render below
+    // already shows all of it.
+    if (!isTyping) return;
+
     let idx = 0;
-    setDisplayed("");
     const interval = setInterval(() => {
       idx += 1;
       if (idx <= text.length) {
-        setDisplayed(text.slice(0, idx));
+        setRun({ text, shown: idx });
       } else {
         clearInterval(interval);
-        onComplete?.();
+        onCompleteRef.current?.();
       }
     }, speed);
 
     return () => clearInterval(interval);
   }, [text, speed, isTyping]);
 
-  return <p className="whitespace-pre-wrap">{displayed}</p>;
+  /* Derived rather than mirrored into state. The old version wrote the whole
+     text in the effect body whenever it was not typing, which is a setState
+     cascading a second render out of the one that just finished; here that
+     case is simply what the component renders. A run that belongs to an
+     older text counts as nothing yet, or the full message would flash for a
+     frame before the typing started. */
+  const shown = !isTyping ? text.length : run.text === text ? run.shown : 0;
+
+  return <p className="whitespace-pre-wrap">{text.slice(0, shown)}</p>;
 }
 
 export function AiAssistant() {
