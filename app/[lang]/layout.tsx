@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { LocaleProvider } from "@/components/providers/locale-provider";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { GrainOverlay } from "@/components/ui/grain-overlay";
+import { SectionSpine } from "@/components/ui/section-spine";
 import { Preloader } from "@/components/ui/preloader";
 import { Cursor } from "@/components/ui/cursor";
 import { IdleMode } from "@/components/ui/idle-mode";
@@ -201,6 +202,7 @@ export default async function RootLayout({
             <SmoothScroll>
               {children}
               <ScrollProgress />
+              <SectionSpine />
               <AiAssistant />
               <GrainOverlay />
               <Cursor />
