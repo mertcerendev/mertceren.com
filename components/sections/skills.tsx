@@ -121,7 +121,13 @@ export function Skills() {
             row there, so it would only ever open a gap inside a column,
             between the heading and its list — which `mt-6` already sets. */}
         <div className="mt-12 grid gap-12 md:grid-cols-3 md:grid-rows-[auto_1fr] md:gap-x-8 md:gap-y-0">
-          {skillTiers.map((tier, tierIndex) => (
+          {skillTiers.map((tier, tierIndex) => {
+            /* Below md the filter removes rows rather than dimming them,
+               so a tier can end up with nothing left under its heading. */
+            const tierHasMatch =
+              active === null ||
+              tier.skills.some((skill) => skill.discipline === active);
+            return (
             <motion.div
               key={tier.tier}
               initial={{ opacity: 0, y: 28 }}
@@ -133,7 +139,10 @@ export function Skills() {
                  skill rows have an unwrappable label pinned to the right, so
                  the list pushed 6px past the viewport at md the moment this
                  column became a grid. */
-              className="md:row-span-2 md:grid md:grid-cols-[minmax(0,1fr)] md:grid-rows-subgrid"
+              className={cn(
+                "md:row-span-2 md:grid md:grid-cols-[minmax(0,1fr)] md:grid-rows-subgrid",
+                !tierHasMatch && "max-md:hidden"
+              )}
             >
               <div className="border-t hairline pt-4">
                 <h3 className="font-display text-2xl font-bold">{tier.tier}</h3>
@@ -153,8 +162,14 @@ export function Skills() {
                       key={skill.name}
                       className={cn(
                         "flex items-baseline justify-between gap-4 border-t hairline py-4 transition-all duration-400 sm:rounded-xl sm:border sm:bg-surface/50 sm:px-4 sm:py-3.5",
+                        /* max-md:hidden, not just dimmed. Side by side
+                           from md the dimming reads as a highlight inside
+                           a list you can still see all of; stacked on a
+                           phone it means scrolling nine ghost rows to
+                           reach three real ones, and the section stays
+                           exactly as long as it was. */
                         dimmed
-                          ? "opacity-30"
+                          ? "opacity-30 max-md:hidden"
                           : "opacity-100 hover:-translate-y-0.5 hover:border-accent/60"
                       )}
                     >
@@ -172,7 +187,8 @@ export function Skills() {
                 })}
               </ul>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
