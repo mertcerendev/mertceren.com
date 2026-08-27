@@ -362,7 +362,7 @@ export const awardsGallery: Array<{
 export const featuredRepos = [
   "bwai-IK-Karar-Motoru",
   "RossoLoungeWeb",
-  "yeniportfo",
+  "mertceren.com",
 ] as const;
 
 export type Certificate = {

@@ -68,7 +68,7 @@ export const MERT_KNOWLEDGE = {
   openSourceRepos: [
     { name: "bwai-IK-Karar-Motoru", desc: "İnsan Kaynakları Karar Destek Motoru (Python / Yapay Zekâ)", href: "https://github.com/mertcerendev/bwai-IK-Karar-Motoru" },
     { name: "RossoLoungeWeb", desc: "Rosso Lounge Bistro Web Platformu Kaynak Kodları", href: "https://github.com/mertcerendev/RossoLoungeWeb" },
-    { name: "yeniportfo", desc: "Mert Ceren Kişisel Portfolyo Web Uygulaması", href: "https://github.com/mertcerendev/yeniportfo" },
+    { name: "mertceren.com", desc: "Mert Ceren Kişisel Portfolyo Web Uygulaması", href: "https://github.com/mertcerendev/mertceren.com" },
   ],
   /**
    * Kept in step with skillTiers in lib/data.ts — this is what the assistant
@@ -231,7 +231,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
   if (has("github", "repo", "kod", "code", "open source", "açık kaynak", "git")) {
     if (locale === "tr") {
       return {
-        text: "🐙 **GitHub & Açık Kaynak Repoları (Kodlarımızı rahatça inceleyebilirsin 😄)**:\n\nResmi GitHub profili: `github.com/mertcerendev`\n\nÖne çıkan açık kaynak repoları:\n1. 🤖 **bwai-IK-Karar-Motoru** — İnsan Kaynakları Karar Destek Motoru (Python / Yapay Zekâ)\n2. 🍷 **RossoLoungeWeb** — Rosso Lounge Bistro Web Platformu Kaynak Kodları\n3. 💻 **yeniportfo** — Şu an gezdiğin bu güzel portfolyonun kaynak kodları ✨",
+        text: "🐙 **GitHub & Açık Kaynak Repoları (Kodlarımızı rahatça inceleyebilirsin 😄)**:\n\nResmi GitHub profili: `github.com/mertcerendev`\n\nÖne çıkan açık kaynak repoları:\n1. 🤖 **bwai-IK-Karar-Motoru** — İnsan Kaynakları Karar Destek Motoru (Python / Yapay Zekâ)\n2. 🍷 **RossoLoungeWeb** — Rosso Lounge Bistro Web Platformu Kaynak Kodları\n3. 💻 **mertceren.com** — Şu an gezdiğin bu güzel portfolyonun kaynak kodları ✨",
         actionLinks: [
           { label: "GitHub Repolarına Git 🐙", href: "#github", isAnchor: true },
           { label: "GitHub Profilini Aç ↗", href: "https://github.com/mertcerendev" },
@@ -239,7 +239,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
       };
     } else {
       return {
-        text: "🐙 **GitHub & Open Source Repositories**:\n\nOfficial GitHub Profile: `github.com/mertcerendev`\n\nFeatured open-source repositories:\n1. 🤖 **bwai-IK-Karar-Motoru** — HR Decision Support Engine (Python / AI)\n2. 🍷 **RossoLoungeWeb** — Rosso Lounge Bistro Web Platform\n3. 💻 **yeniportfo** — Personal Portfolio Web App",
+        text: "🐙 **GitHub & Open Source Repositories**:\n\nOfficial GitHub Profile: `github.com/mertcerendev`\n\nFeatured open-source repositories:\n1. 🤖 **bwai-IK-Karar-Motoru** — HR Decision Support Engine (Python / AI)\n2. 🍷 **RossoLoungeWeb** — Rosso Lounge Bistro Web Platform\n3. 💻 **mertceren.com** — Personal Portfolio Web App",
         actionLinks: [
           { label: "Jump to GitHub Section 🐙", href: "#github", isAnchor: true },
           { label: "Open GitHub Profile ↗", href: "https://github.com/mertcerendev" },

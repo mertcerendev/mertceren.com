@@ -60,7 +60,7 @@ export function GithubStats({
       badge: "HTML",
       stack: "HTML / C#",
     },
-    yeniportfo: {
+    "mertceren.com": {
       description: isTr
         ? "Next.js 16, TypeScript ve TailwindCSS ile sıfırdan geliştirilmiş kişisel web portfolyosu."
         : "Personal web portfolio built from scratch with Next.js 16, TypeScript & TailwindCSS.",
