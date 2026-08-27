@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { LocaleProvider } from "@/components/providers/locale-provider";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { GrainOverlay } from "@/components/ui/grain-overlay";
+import { ScrollChroma } from "@/components/ui/scroll-chroma";
 import { Preloader } from "@/components/ui/preloader";
 import { Cursor } from "@/components/ui/cursor";
 import { IdleMode } from "@/components/ui/idle-mode";
@@ -202,6 +203,8 @@ export default async function RootLayout({
               {children}
               <ScrollProgress />
               <AiAssistant />
+              {/* Under the grain: the grain is the film, this is the lens. */}
+              <ScrollChroma />
               <GrainOverlay />
               <Cursor />
               <IdleMode />
