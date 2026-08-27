@@ -9,6 +9,7 @@ import { Awards } from "@/components/sections/awards";
 import { Certificates } from "@/components/sections/certificates";
 import { GithubStats } from "@/components/sections/github";
 import { Contact } from "@/components/sections/contact";
+import { ScrollSkew } from "@/components/ui/scroll-skew";
 import { isLocale } from "@/lib/content";
 import { getGithubStats } from "@/lib/github";
 
@@ -48,16 +49,20 @@ export default async function Home({
   return (
     <>
       <Header />
-      <main id="main">
-        <Hero />
-        <Works />
-        <About />
-        <Skills />
-        <GithubStats stats={stats} lastPushLabel={lastPushLabel} />
-        <Certificates />
-        <Awards />
-        <Contact />
-      </main>
+      {/* Header stays outside: it is fixed, and a transformed ancestor
+          would make it scroll away with the page. */}
+      <ScrollSkew>
+        <main id="main">
+          <Hero />
+          <Works />
+          <About />
+          <Skills />
+          <GithubStats stats={stats} lastPushLabel={lastPushLabel} />
+          <Certificates />
+          <Awards />
+          <Contact />
+        </main>
+      </ScrollSkew>
       <Footer />
     </>
   );
