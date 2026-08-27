@@ -4,6 +4,22 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { ReactLenis, useLenis } from "lenis/react";
 import "lenis/dist/lenis.css";
+import { locales } from "@/lib/content";
+
+const LOCALE_PREFIX = new RegExp(`^/(?:${locales.join("|")})(?=/|$)`);
+const barePath = (path: string) => path.replace(LOCALE_PREFIX, "") || "/";
+
+/**
+ * The bare path this module last navigated to, so the effect below can tell
+ * a change of page from a change of language.
+ *
+ * Module scope rather than a ref: the layout this lives in sits under
+ * app/[lang], and switching locale changes that segment's param, which can
+ * take the component down and bring it back with a fresh ref. A module-level
+ * value survives that and is reset by a full page load, which is exactly when
+ * arriving at the top is right again.
+ */
+let lastBarePath: string | null = null;
 
 /**
  * Puts the new page at the top after a client-side navigation.
@@ -28,6 +44,16 @@ function ScrollToTopOnNavigate() {
 
   useEffect(() => {
     if (!lenis) return;
+
+    const bare = barePath(pathname);
+    const previous = lastBarePath;
+    lastBarePath = bare;
+
+    /* Same page in the other language: the reader asked for a translation,
+       not a trip back to the top. This runs on any pathname change, and
+       /tr -> /en is one, so it was undoing the toggle's own scroll={false}
+       and throwing the reader out of whatever section they were reading. */
+    if (previous !== null && previous === bare) return;
 
     const { hash } = window.location;
     if (hash) {
