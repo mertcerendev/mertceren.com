@@ -75,7 +75,21 @@ export function GrainOverlay() {
     <>
       <div
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-100 opacity-[0.045] mix-blend-overlay dark:opacity-[0.06]"
+        /* These look high for a grain layer and are not. mix-blend-overlay
+           collapses towards the ends of the range - on a #0a0a0b ground it
+           behaves like a multiply, so the brightest speckle the noise has
+           only reaches 0.078 before any opacity is applied. At the 0.045 /
+           0.06 this shipped with, a pixel moved 1.2 levels out of 255,
+           which is under what a screen resolves: the layer was there and
+           doing nothing.
+
+           The two numbers differ because the swing per unit of opacity
+           does: 19.9 levels on the dark ground, 26 on the light one. These
+           put both themes at the same 6 levels rather than at the same
+           opacity. And because overlay leaves the average alone on both
+           grounds, raising it adds texture without lifting the black or
+           dirtying the paper. */
+        className="pointer-events-none fixed inset-0 z-100 opacity-[0.23] mix-blend-overlay dark:opacity-[0.30]"
         style={{ backgroundImage: NOISE_URL }}
       />
       {/* The mask starts a screen away, so there is nothing to see until the
@@ -84,7 +98,10 @@ export function GrainOverlay() {
       <div
         ref={lampRef}
         aria-hidden
-        className="pointer-events-none fixed inset-0 z-100 opacity-[0.055] mix-blend-overlay dark:opacity-[0.075]"
+        /* 0.7x the base, so the pointer reads as more grain rather than as
+           twice the grain. Roughly 10 levels of swing under the cursor
+           against 6 elsewhere. */
+        className="pointer-events-none fixed inset-0 z-100 opacity-[0.16] mix-blend-overlay dark:opacity-[0.21]"
         style={{
           backgroundImage: NOISE_URL,
           backgroundPosition: "37px 53px",
