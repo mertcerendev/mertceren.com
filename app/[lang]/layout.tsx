@@ -18,7 +18,10 @@ import "../globals.css";
 const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin", "latin-ext"],
-  weight: ["600", "700", "800"],
+  /* No weight list, so next/font serves Syne's variable file rather than
+     three static cuts. The hero interpolates the axis between words as the
+     pointer passes, which static instances cannot do — and one variable file
+     is smaller than the three it replaces. */
 });
 
 const inter = Inter({

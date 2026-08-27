@@ -19,6 +19,22 @@ export function Hero() {
   const { heroStatement, profile, ui } = useContent();
   const time = useLocalTime(profile.timezone);
 
+  /* Keyed by position rather than pushed into an array during render: a ref
+     callback that returns a cleanup removes its own node when the letter
+     unmounts, so switching locale cannot leave stale nodes behind and
+     nothing has to be reset while rendering. */
+  const charsRef = useRef(new Map<string, HTMLSpanElement>());
+  const weightsRef = useRef(new WeakMap<Element, number>());
+  const pointerRef = useRef({ x: 0, y: 0, live: false });
+  const registerChar = (key: string) => (el: HTMLSpanElement | null) => {
+    if (!el) return;
+    charsRef.current.set(key, el);
+    // Braced: Map.delete returns a boolean and a ref cleanup must return void.
+    return () => {
+      charsRef.current.delete(key);
+    };
+  };
+
   const glowX = useMotionValue(0);
   const glowY = useMotionValue(0);
   const springX = useSpring(glowX, { stiffness: 50, damping: 20 });
@@ -39,11 +55,116 @@ export function Hero() {
     glowY.jump(rect.height * 0.35);
   }, [glowX, glowY]);
 
+  /**
+   * The pointer thins the letters it passes rather than thickening them.
+   *
+   * Syne's weight axis carries width with it — a glyph at 800 is half again
+   * as wide as the same glyph at 650 — and the display size is tuned so the
+   * longest word only just fits the viewport at 800. Swelling letters would
+   * push the line off the side of the screen, so the resting state stays at
+   * 800, exactly as it renders today, and the pointer takes weight away.
+   *
+   * Mouse only, and only while the pointer is actually over the section: the
+   * loop stops itself once every letter is back at rest.
+   */
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    const REST = 800;
+    const FLOOR = 440;
+    const REACH = 220;
+
+    let frame = 0;
+    let measuredAt = 0;
+    let nodes: HTMLSpanElement[] = [];
+    let centres: Array<{ x: number; y: number }> = [];
+
+    // Both rebuilt together, so a letter and its centre can never fall out
+    // of step — and reading the map here rather than capturing it once means
+    // a re-render that replaces the letters is picked up on the next pass.
+    const measure = () => {
+      nodes = [...charsRef.current.values()];
+      centres = nodes.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+      });
+    };
+
+    const tick = (now: number) => {
+      // Thinning changes each glyph's advance, so the centres drift as the
+      // effect runs. Re-measured on a slow cadence rather than every frame:
+      // reading 30 rects a frame is a forced layout on top of Lenis's own.
+      if (now - measuredAt > 120) {
+        measure();
+        measuredAt = now;
+      }
+
+      const p = pointerRef.current;
+      let settled = true;
+
+      for (let i = 0; i < nodes.length; i++) {
+        const el = nodes[i];
+        const c = centres[i];
+        if (!el || !c) continue;
+
+        let target = REST;
+        if (p.live) {
+          const dx = c.x - p.x;
+          const dy = c.y - p.y;
+          const t = Math.max(0, 1 - Math.hypot(dx, dy) / REACH);
+          target = REST - t * t * (REST - FLOOR);
+        }
+
+        const current = weightsRef.current.get(el) ?? REST;
+        const next = current + (target - current) * 0.18;
+        if (Math.abs(next - target) > 1) settled = false;
+
+        // Quantised: below about four units the change cannot be seen, and
+        // every write here is a style recalculation.
+        const rounded = Math.round(next / 4) * 4;
+        if (Math.round(current / 4) * 4 !== rounded) {
+          el.style.fontVariationSettings = `"wght" ${rounded}`;
+        }
+        weightsRef.current.set(el, next);
+      }
+
+      if (!p.live && settled) {
+        frame = 0;
+        return;
+      }
+      frame = requestAnimationFrame(tick);
+    };
+
+    const start = () => {
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
+
+    const section = sectionRef.current;
+    const onEnter = () => start();
+    const onLeave = () => {
+      pointerRef.current.live = false;
+      start();
+    };
+
+    section?.addEventListener("pointerenter", onEnter);
+    section?.addEventListener("pointerleave", onLeave);
+    window.addEventListener("resize", measure, { passive: true });
+    measure();
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      section?.removeEventListener("pointerenter", onEnter);
+      section?.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
+
   const onMouseMove = (e: React.MouseEvent) => {
     const rect = sectionRef.current?.getBoundingClientRect();
     if (!rect) return;
     glowX.set(e.clientX - rect.left);
     glowY.set(e.clientY - rect.top);
+    pointerRef.current = { x: e.clientX, y: e.clientY, live: true };
   };
 
   return (
@@ -83,7 +204,20 @@ export function Hero() {
                 )}
                 style={{ animationDelay: `${0.25 + i * 0.1}s` }}
               >
-                {text}
+                {/* Split so the weight axis can be driven per letter. The
+                    line is one word in both locales, so no space handling is
+                    needed; a space would still render, it simply would not
+                    be a target. */}
+                {Array.from(text).map((ch, j) => (
+                  <span
+                    key={j}
+                    ref={registerChar(`${i}-${j}`)}
+                    className="inline-block"
+                    style={{ fontVariationSettings: '"wght" 800' }}
+                  >
+                    {ch}
+                  </span>
+                ))}
                 {endsWithPeriod && <span className="text-accent">.</span>}
               </span>
             </span>
