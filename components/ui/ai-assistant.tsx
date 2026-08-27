@@ -435,7 +435,11 @@ export function AiAssistant() {
           aria-label="AI Asistan ile Konuş"
         >
           {/* Glowing Aura Effect */}
-          <span className="absolute -inset-1 rounded-full bg-accent/20 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+          {/* group-hover:opacity-100 and its transition are gone: the button
+              is not a `group` and this had no opacity-0 to rise from, so the
+              pair never did anything on any device. The glow was always on,
+              and still is. */}
+          <span className="absolute -inset-1 rounded-full bg-accent/20 blur-md" />
           
           {isOpen ? (
             <svg className="h-6 w-6 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -532,6 +536,11 @@ export function AiAssistant() {
                     ]);
                   }}
                   className="tap-target flex size-9 items-center justify-center rounded-full text-muted hover:text-foreground transition-colors cursor-pointer sm:size-8"
+                  /* aria-label as well as the tooltip. title never opens on
+                     a touch screen, so on a phone this was an unlabelled bin
+                     icon - and the close button beside it already carried
+                     one. */
+                  aria-label={isTr ? "Sohbeti temizle" : "Clear chat"}
                   title={isTr ? "Sohbeti Temizle" : "Clear Chat"}
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
