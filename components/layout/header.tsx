@@ -35,10 +35,13 @@ export function Header() {
     };
   }, [menuOpen, lenis]);
 
+  /* Neither of these clears body.style.overflow. The effect above owns it
+     and clears it as soon as menuOpen goes false, which happens well
+     before the 150ms wait below; writing it here as well only gave the
+     property a second owner. */
   const goTo = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
     setMenuOpen(false);
-    document.body.style.overflow = "";
 
     setTimeout(() => {
       const target = document.querySelector(href);
@@ -58,7 +61,6 @@ export function Header() {
   const goTop = (e: React.MouseEvent) => {
     e.preventDefault();
     setMenuOpen(false);
-    document.body.style.overflow = "";
 
     if (window.location.pathname !== home) {
       window.location.assign(home);

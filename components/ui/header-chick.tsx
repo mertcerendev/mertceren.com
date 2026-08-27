@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { readMute } from "@/lib/cursor-mute";
 
 /**
  * Legs swing ±30° on a ~5.5px shank, so a foot covers ~11px per gait cycle.
@@ -480,7 +481,7 @@ export function HeaderChick() {
       if (!isMobileRef.current) return;
       try {
         if (sessionStorage.getItem(GREET_KEY) === "1") return;
-        if (localStorage.getItem("mert_cursor_muted") === "true") return;
+        if (readMute()) return;
         sessionStorage.setItem(GREET_KEY, "1");
       } catch {
         return; // Private mode and the like: skip it rather than repeat it.

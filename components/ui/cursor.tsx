@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useState, useRef, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { readMute, readMuteOnServer, subscribeMute, writeMute } from "@/lib/cursor-mute";
 
 const IDLE_MESSAGES_TR = [
   "Hangi projeyi incelesek? 🤔",
@@ -214,8 +215,10 @@ export function Cursor() {
   /** Talks over the idle deck when the page gets flung around. */
   const [reactionMessage, setReactionMessage] = useState<string | null>(null);
 
-  // Mute & Sulky state
-  const [isMuted, setIsMuted] = useState(false);
+  // Mute & Sulky state. The flag lives in the shared store rather than in
+  // this component, so the header toggle, the idle overlay and the chick
+  // all read one value instead of four copies of the same localStorage.
+  const isMuted = useSyncExternalStore(subscribeMute, readMute, readMuteOnServer);
   const [sulkyMessage, setSulkyMessage] = useState<string | null>(null);
 
   /**
@@ -255,20 +258,20 @@ export function Cursor() {
   const reactionTimerRef = useRef<NodeJS.Timeout | null>(null);
   const isMutedRef = useRef(false);
 
-  // Load initial mute state from localStorage
+  /* The same flag, readable from inside long-lived closures. The scroll
+     loop below checks it on every event and the toggle handler needs it
+     without re-subscribing, and neither can see a value captured at the
+     render it was created in. Mirrored here rather than read from storage
+     each time, which that loop would do hundreds of times a scroll. */
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem("mert_cursor_muted");
-      if (saved === "true") {
-        setIsMuted(true);
-        isMutedRef.current = true;
-      }
-    } catch {
-      // ignore
-    }
-  }, []);
+    isMutedRef.current = isMuted;
+  }, [isMuted]);
 
-  const handleMute = () => {
+  /* useCallback so the listener effect below can name these in its
+     dependency array honestly. As plain functions they were a new pair on
+     every render, and the effect quietly left them out to avoid
+     re-subscribing on each one. */
+  const handleMute = useCallback(() => {
     const tripMsg = isEnglish
       ? "Fine! I'll shut up! 🙄 Not saying a single word, happy?!"
       : "Öff tamam sustum ya! 🙄 HİÇ konuşmuyorum tamam mı!";
@@ -277,28 +280,18 @@ export function Cursor() {
     setSulkyMessage(tripMsg);
 
     setTimeout(() => {
-      setIsMuted(true);
-      isMutedRef.current = true;
       setSulkyMessage(null);
       setIdleMessage(null);
-      try {
-        localStorage.setItem("mert_cursor_muted", "true");
-        window.dispatchEvent(new CustomEvent("mert-cursor-mute-changed", { detail: { muted: true } }));
-      } catch {
-        // ignore
-      }
+      // Set here as well as by the effect above: the store notifies on the
+      // next render, and the scroll loop may read the ref before then.
+      isMutedRef.current = true;
+      writeMute(true);
     }, 2200);
-  };
+  }, [isEnglish]);
 
-  const handleUnmute = () => {
-    setIsMuted(false);
+  const handleUnmute = useCallback(() => {
     isMutedRef.current = false;
-    try {
-      localStorage.setItem("mert_cursor_muted", "false");
-      window.dispatchEvent(new CustomEvent("mert-cursor-mute-changed", { detail: { muted: false } }));
-    } catch {
-      // ignore
-    }
+    writeMute(false);
 
     const happyMsg = isEnglish
       ? "Yayy! Finally letting me talk again! 😄🎉"
@@ -309,7 +302,7 @@ export function Cursor() {
     setTimeout(() => {
       setSulkyMessage(null);
     }, 2200);
-  };
+  }, [isEnglish]);
 
   // Listen to header toggle event
   useEffect(() => {
@@ -323,7 +316,7 @@ export function Cursor() {
 
     window.addEventListener("mert-toggle-cursor-mute", handleToggleEvent);
     return () => window.removeEventListener("mert-toggle-cursor-mute", handleToggleEvent);
-  }, [isEnglish]);
+  }, [handleMute, handleUnmute]);
 
   useEffect(() => {
     const fine = window.matchMedia("(pointer: fine)").matches;

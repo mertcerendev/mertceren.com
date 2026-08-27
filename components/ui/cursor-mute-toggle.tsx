@@ -1,33 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { readMute, readMuteOnServer, subscribeMute } from "@/lib/cursor-mute";
 
 export function CursorMuteToggle({ className }: { className?: string }) {
   const pathname = usePathname() ?? "/";
   const isEnglish = pathname === "/en" || pathname.startsWith("/en/");
 
-  const [isMuted, setIsMuted] = useState(false);
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("mert_cursor_muted");
-      if (saved === "true") setIsMuted(true);
-    } catch {
-      // ignore
-    }
-
-    const handleStateChange = (e: Event) => {
-      const customEvt = e as CustomEvent;
-      if (typeof customEvt.detail?.muted === "boolean") {
-        setIsMuted(customEvt.detail.muted);
-      }
-    };
-
-    window.addEventListener("mert-cursor-mute-changed", handleStateChange);
-    return () => window.removeEventListener("mert-cursor-mute-changed", handleStateChange);
-  }, []);
+  /* Straight off the shared store. This used to seed state from
+     localStorage inside an effect body and keep a second listener of its
+     own; both are what useSyncExternalStore is for, and idle-mode.tsx was
+     already reading the same flag this way. */
+  const isMuted = useSyncExternalStore(subscribeMute, readMute, readMuteOnServer);
 
   const handleClick = () => {
     window.dispatchEvent(new CustomEvent("mert-toggle-cursor-mute"));

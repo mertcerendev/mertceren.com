@@ -3,20 +3,11 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { usePathname } from "next/navigation";
+import { readMute, readMuteOnServer, subscribeMute } from "@/lib/cursor-mute";
 
-/** Muting the cursor bubbles means "be quiet" — that covers this too. */
-const subscribeMute = (onChange: () => void) => {
-  window.addEventListener("mert-cursor-mute-changed", onChange);
-  return () => window.removeEventListener("mert-cursor-mute-changed", onChange);
-};
-
-const readMute = () => {
-  try {
-    return localStorage.getItem("mert_cursor_muted") === "true";
-  } catch {
-    return false;
-  }
-};
+/** Muting the cursor bubbles means "be quiet" — that covers this too. The
+    pair this file used to declare now lives in lib/cursor-mute, where the
+    header toggle and the cursor read it as well. */
 
 /**
  * Three escalating stages of being ignored. `delay` is the wait *since the
@@ -90,7 +81,7 @@ export function IdleMode() {
   const [stage, setStage] = useState(0);
   const [message, setMessage] = useState("");
   // Server render is always unmuted so the markup matches on hydration.
-  const isMuted = useSyncExternalStore(subscribeMute, readMute, () => false);
+  const isMuted = useSyncExternalStore(subscribeMute, readMute, readMuteOnServer);
 
   const stageRef = useRef(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
