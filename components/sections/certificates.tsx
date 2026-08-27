@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
@@ -11,9 +11,9 @@ import type { Certificate } from "@/lib/data";
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 /**
- * Half the collection, shown inline. Twelve rather than ten because it fills
- * both grids exactly — four rows of three from lg, six rows of two at sm —
- * where ten leaves a single card alone on the last row of the wide layout.
+ * Half the collection, carried by the band. Six read as a token sample of
+ * twenty-four; the band takes the extra cards sideways, where they cost
+ * travel rather than screens, so it can hold more than the grid could.
  * The rest are a button away.
  */
 const FEATURED_COUNT = 12;
@@ -47,7 +47,7 @@ type CardProps = {
 
 function CertificateCard({ certificate, index, viewLabel, onSelect }: CardProps) {
   return (
-    <motion.li
+    <motion.div
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10% 0px" }}
@@ -86,14 +86,15 @@ function CertificateCard({ certificate, index, viewLabel, onSelect }: CardProps)
         <div className="relative overflow-hidden rounded-xl border hairline bg-black/40 h-32 w-full mt-1">
           {/* This strip is 128px tall and shows the top slice of a scan that
               can be a 700KB JPEG. `fill` plus a `sizes` hint is what stops it
-              downloading the full-resolution file to paint a thumbnail —
-              one card per row on a phone, two from sm, three from lg. */}
+              downloading the full-resolution file to paint a thumbnail. The
+              widths track the band's card widths, not the grid's — asking for
+              90vw to fill a 78vw box fetches a larger file for nothing. */}
           <Image
             src={certificate.image}
             alt={certificate.title}
             fill
             loading="lazy"
-            sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 30vw"
+            sizes="(max-width: 640px) 78vw, (max-width: 1024px) 42vw, (max-width: 1280px) 26vw, 22vw"
             className="object-cover object-top opacity-85 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
@@ -121,7 +122,7 @@ function CertificateCard({ certificate, index, viewLabel, onSelect }: CardProps)
           {viewLabel}
         </button>
       </div>
-    </motion.li>
+    </motion.div>
   );
 }
 
@@ -160,6 +161,67 @@ export function Certificates() {
     };
   }, [isAllModalOpen, selectedCert]);
 
+  const bandOuterRef = useRef<HTMLDivElement>(null);
+  const bandRowRef = useRef<HTMLUListElement>(null);
+  const bandBarRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Turns downward scroll into sideways travel while the band is pinned.
+   *
+   * The wrapper's height is measured rather than fixed: viewport plus exactly
+   * the distance the row has to cover, so one pixel down is one pixel across.
+   * A hard 300vh would have tied the speed to however many cards happened to
+   * be in the row, and to the width of the screen reading it.
+   */
+  useEffect(() => {
+    const outer = bandOuterRef.current;
+    const row = bandRowRef.current;
+    if (!outer || !row) return;
+
+    let frame = 0;
+    let travel = 0;
+
+    const measure = () => {
+      travel = Math.max(0, row.scrollWidth - window.innerWidth);
+      outer.style.height = `${window.innerHeight + travel}px`;
+      paint();
+    };
+
+    function paint() {
+      const o = bandOuterRef.current;
+      const r = bandRowRef.current;
+      if (!o || !r) return;
+      const box = o.getBoundingClientRect();
+      const span = box.height - window.innerHeight;
+      const progress = span > 0 ? Math.min(1, Math.max(0, -box.top / span)) : 0;
+      r.style.transform = `translate3d(${(-progress * travel).toFixed(1)}px,0,0)`;
+      if (bandBarRef.current) {
+        bandBarRef.current.style.width = `${(progress * 100).toFixed(1)}%`;
+      }
+      frame = 0;
+    }
+
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+
+    // The cards carry lazy images, so the row's width settles after they land.
+    const observer = new ResizeObserver(measure);
+    observer.observe(row);
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", measure, { passive: true });
+    measure();
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", measure);
+      if (frame) cancelAnimationFrame(frame);
+      outer.style.height = "";
+    };
+  }, []);
+
   const filteredCertificates = useMemo(() => {
     if (!searchQuery.trim()) return certificates;
     const query = searchQuery.toLowerCase().trim();
@@ -196,27 +258,51 @@ export function Certificates() {
         />
       </div>
 
-      {/* 40px between cards on a phone, not 24. A 327px card with 24px under
-          it gives the gap 7% of the card's own height, which is why they read
-          as one block rather than as separate things.
+      {/* The band travels sideways as the page scrolls down. The wrapper's
+          height is set in JS to the viewport plus exactly the distance the
+          row has to cover, so a pixel of vertical scroll is a pixel of
+          horizontal travel — a fixed 300vh would have made the speed depend
+          on how many cards there happened to be.
 
-          Four on a phone, twelve from sm up. The phone lays them out one per
-          row, so twelve of them would be twelve screens of the same card —
-          the repetition the owner was seeing when this showed six. Hidden in
-          CSS rather than sliced in JS so the server and the client render the
-          same list, and the thumbnails are lazy, so the eight that are hidden
-          cost nothing to fetch. */}
-      <ul className="mt-10 grid gap-10 [&>*:nth-child(n+5)]:hidden sm:grid-cols-2 sm:gap-6 sm:[&>*:nth-child(n+5)]:flex lg:grid-cols-3">
-        {featured.map((certificate, i) => (
-          <CertificateCard
-            key={`${certificate.issued}-${certificate.title}`}
-            certificate={certificate}
-            index={i}
-            viewLabel={copy.view}
-            onSelect={setSelectedCert}
-          />
-        ))}
-      </ul>
+          It replaced a grid. A dozen cards stacked one per row on a phone is a
+          dozen screens of the same card, which is the repetition the owner
+          kept seeing; sideways they pass in a single gesture, and the row is
+          shorter than the column it replaced. */}
+      <div ref={bandOuterRef} className="relative -mx-5 mt-10 sm:-mx-8 lg:-mx-12">
+        <div className="sticky top-0 flex h-svh flex-col justify-center overflow-hidden">
+          {/* Five on a phone, all twelve from sm. A phone card is 293px
+              wide, so twelve of them ask for well over 3000px of scroll to
+              get past — longer than the section has any right to be. Hidden
+              in CSS rather than sliced in JS so the server and the client
+              render the same list, and scrollWidth then measures only what
+              is actually shown. */}
+          <ul
+            ref={bandRowRef}
+            className="flex gap-6 px-5 [&>*:nth-child(n+6)]:hidden sm:px-8 sm:[&>*:nth-child(n+6)]:flex lg:px-12"
+          >
+            {featured.map((certificate, i) => (
+              <li
+                key={`${certificate.issued}-${certificate.title}`}
+                className="flex w-[78vw] shrink-0 sm:w-[42vw] lg:w-[26vw] xl:w-[22vw]"
+              >
+                <CertificateCard
+                  certificate={certificate}
+                  index={i}
+                  viewLabel={copy.view}
+                  onSelect={setSelectedCert}
+                />
+              </li>
+            ))}
+          </ul>
+
+          {/* How far through the band you are. The section is taller than a
+              screen and pinned, so without this there is no cue that the
+              page is still moving. */}
+          <div className="mx-5 mt-8 h-px bg-line sm:mx-8 lg:mx-12">
+            <div ref={bandBarRef} className="h-px w-0 bg-accent" />
+          </div>
+        </div>
+      </div>
 
       {/* Tucked close under the last row — 24px on a phone, 32px from sm.
           Centring it in the trailing space was tried and read as detached:
