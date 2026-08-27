@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
+import { motion, useInView } from "motion/react";
 import { awardsGallery } from "@/lib/data";
 import { useContent } from "@/components/providers/locale-provider";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -12,6 +12,10 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 export function Awards() {
   const { awards, ui } = useContent();
   const stripRef = useRef<HTMLDivElement>(null);
+  /* One observer for the whole strip rather than one per photo: they sit
+     side by side and arrive together, so seven observers would all fire
+     within a few hundred milliseconds of each other anyway. */
+  const developed = useInView(stripRef, { once: true, margin: "-8% 0px" });
   const [active, setActive] = useState(0);
 
   /* Which photo the swipe has landed on, for the dots below the strip.
@@ -128,7 +132,16 @@ export function Awards() {
                          ratio; height-locked from sm as before, where the
                          widest it can render is 960/640 × 224 ≈ 336px. */
                       sizes="(max-width: 640px) 78vw, 336px"
-                      className="h-auto w-[78vw] shrink-0 snap-start rounded-xl border hairline object-cover sm:h-56 sm:w-auto"
+                      /* Comes up out of the developer: grey and soft, then
+                         sharp and in colour. The filter is on the image and
+                         not on a wrapper - blurring the row instead would
+                         ask the browser to rasterise and blur a 4545px box,
+                         where this is seven 234px ones. */
+                      className={`h-auto w-[78vw] shrink-0 snap-start rounded-xl border hairline object-cover transition-[filter] duration-[1400ms] ease-out sm:h-56 sm:w-auto ${
+                        developed
+                          ? "blur-[0px] grayscale-0"
+                          : "blur-[10px] grayscale"
+                      }`}
                     />
                   ))}
                 </div>

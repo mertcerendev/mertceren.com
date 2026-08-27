@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useInView } from "motion/react";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { AskAiButton } from "@/components/ui/ask-ai-button";
@@ -46,6 +46,12 @@ type CardProps = {
 };
 
 function CertificateCard({ certificate, index, viewLabel, onSelect }: CardProps) {
+  /* Per card, not per section. In the band these arrive one at a time as
+     the row slides past, so a single observer on the section would develop
+     the eleven cards still off to the right along with the first. */
+  const shotRef = useRef<HTMLDivElement>(null);
+  const developed = useInView(shotRef, { once: true, margin: "-5% 0px" });
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 24 }}
@@ -83,7 +89,10 @@ function CertificateCard({ certificate, index, viewLabel, onSelect }: CardProps)
       </div>
 
       {certificate.image && (
-        <div className="relative overflow-hidden rounded-xl border hairline bg-black/40 h-32 w-full mt-1">
+        <div
+          ref={shotRef}
+          className="relative overflow-hidden rounded-xl border hairline bg-black/40 h-32 w-full mt-1"
+        >
           {/* This strip is 128px tall and shows the top slice of a scan that
               can be a 700KB JPEG. `fill` plus a `sizes` hint is what stops it
               downloading the full-resolution file to paint a thumbnail. The
@@ -95,7 +104,14 @@ function CertificateCard({ certificate, index, viewLabel, onSelect }: CardProps)
             fill
             loading="lazy"
             sizes="(max-width: 640px) 78vw, (max-width: 1024px) 42vw, (max-width: 1280px) 26vw, 22vw"
-            className="object-cover object-top opacity-85 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-100"
+            /* Develops as it arrives, then keeps the hover behaviour it
+               already had. Both properties are named in the transition so
+               the scale on hover is not slowed to the develop duration. */
+            className={`object-cover object-top opacity-85 transition-[transform,filter] duration-500 group-hover:scale-105 group-hover:opacity-100 ${
+              developed
+                ? "blur-[0px] grayscale-0"
+                : "blur-[8px] grayscale duration-[1400ms]"
+            }`}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-3">
             <span className="text-xs text-white/90 font-medium flex items-center gap-1.5 bg-black/60 px-2.5 py-1 rounded-full backdrop-blur-md border hairline">
