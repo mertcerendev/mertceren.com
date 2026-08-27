@@ -49,8 +49,17 @@ export function AskAiButton({
       title={displayLabel}
       aria-label={`${displayLabel}: ${prompt}`}
       className={cn(
-        "group/ai-btn relative inline-flex items-center justify-center gap-2 rounded-full font-mono transition-all duration-300 cursor-pointer select-none",
-        size === "sm" && "px-3 py-1.5 text-[0.625rem] tracking-[0.1em]",
+        /* tap-target: the visible box is 27px tall at sm and 34px at md, and
+           neither is a thumb target. The overlay grows the hit area to 44px
+           on coarse pointers without touching layout, so the type stays as
+           drawn. */
+        "group/ai-btn tap-target relative inline-flex items-center justify-center gap-2 rounded-full font-mono transition-all duration-300 cursor-pointer select-none",
+        /* sm is a desktop size: it exists to sit quietly beside a section
+           heading. On a phone it rendered 10px type in a 27px box, under the
+           11px the rest of the site treats as its floor (see microlabel), so
+           below sm it borrows md metrics and the small ones start at sm. */
+        size === "sm" &&
+          "px-4 py-2.5 text-[0.6875rem] tracking-[0.12em] sm:px-3 sm:py-1.5 sm:text-[0.625rem] sm:tracking-[0.1em]",
         size === "md" && "px-4 py-2 text-[0.6875rem] tracking-[0.12em]",
         variant === "glass" &&
           "border border-white/20 bg-white/5 text-white backdrop-blur-md hover:border-accent hover:bg-accent/15 hover:text-accent shadow-sm",

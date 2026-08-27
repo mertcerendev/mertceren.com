@@ -95,7 +95,11 @@ export function About() {
 
         {/* Experience timeline */}
         <div>
-          <div className="mb-3 flex items-center justify-between">
+          {/* Wraps, and has a gap to wrap against. The button grew to 242px when
+              it stopped being 10px type, and 93 + 242 is exactly the 335px
+              this row has on a 375px screen — label and button met with no
+              space between them. Same idiom the skills row already uses. */}
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <p className="microlabel">{ui.sections.about.timeline}</p>
             <AskAiButton
               prompt={
