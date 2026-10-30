@@ -43,7 +43,7 @@ export const MERT_KNOWLEDGE = {
       category: "Yapay Zekâ & 5G Haberleşme",
       tech: ["Python", "YOLOv11", "Bilgisayarlı Görü", "5G Edge"],
       summary:
-        "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı yol güvenliği sistemi. Destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı nesne tespit modelleri. TEKNOFEST 2026 için 5Genç takımı bünyesinde geliştirildi; yarışma Ağustos 2026'da tamamlandı ve teslim edilen sistem resmî doğrulama verisinde 0.716 F1 skoru aldı.",
+        "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı yol güvenliği sistemi. Destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı nesne tespit modelleri. 5Genç takımıyla TEKNOFEST 2026'da Türkiye üçüncüsü oldu; teslim edilen sistem resmî doğrulama verisinde 0.716 F1 skoru aldı.",
       href: "/work/smart-road-safety",
     },
     {
@@ -88,7 +88,7 @@ export const MERT_KNOWLEDGE = {
      wrong for at least one locale. */
   certificatesCount: certificates.length,
   awards: [
-    { title: "TEKNOFEST 2026 Finalisti", issuer: "T3 Vakfı & Sanayi ve Teknoloji Bakanlığı", year: "2026", project: "5G & Yapay Zeka ile Akıllı Yol Güvenliği" },
+    { title: "TEKNOFEST 2026 Türkiye Üçüncüsü", issuer: "T3 Vakfı & Sanayi ve Teknoloji Bakanlığı", year: "2026", project: "5G & Yapay Zeka ile Akıllı Yol Güvenliği" },
   ],
 };
 
@@ -207,10 +207,10 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
   }
 
   // ÖDÜLLER & DERECELER (Awards & Honors)
-  if (has("ödül", "derece", "yarısm", "yarışm", "başarı", "finalist", "t3", "award", "honor")) {
+  if (has("ödül", "derece", "yarısm", "yarışm", "başarı", "üçüncü", "finalist", "t3", "award", "honor", "third")) {
     if (locale === "tr") {
       return {
-        text: "🏆 **Ödüller & Dereceler (TEKNOFEST'te finale kaldık bile! 😄)**:\n\n• **TEKNOFEST 2026 Finalisti** — *T3 Vakfı & Sanayi ve Teknoloji Bakanlığı*\n  **Proje**: 5G & Yapay Zekâ ile Akıllı Yol Güvenliği (5Genç Takım Kaptanı)\n\nMert ve 5Genç takımı YOLOv11 modeliyle finale yükseldi. Ben de burada sevinçten nöronlarımı çalıştırıyorum 🤖✨",
+        text: "🏆 **Ödüller & Dereceler (TEKNOFEST'te Türkiye üçüncüsü olduk! 😄)**:\n\n• **TEKNOFEST 2026 Türkiye Üçüncüsü** — *T3 Vakfı & Sanayi ve Teknoloji Bakanlığı*\n  **Proje**: 5G & Yapay Zekâ ile Akıllı Yol Güvenliği (5Genç Takım Kaptanı)\n\nMert ve 5Genç takımı YOLOv11 modeliyle Türkiye üçüncüsü oldu. Ben de burada sevinçten nöronlarımı çalıştırıyorum 🤖✨",
         actionLinks: [
           { label: "Ödüller Bölümüne Git 🏆", href: "#awards", isAnchor: true },
           { label: "Seçilmiş Projeler Bölümüne Git 🚀", href: "#work", isAnchor: true },
@@ -218,7 +218,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
       };
     } else {
       return {
-        text: "🏆 **Awards & Honors Summary**:\n\n• **TEKNOFEST 2026 Finalist** — *T3 Foundation & Ministry of Industry and Technology*\n  **Project**: 5G & AI Smart Road Safety (Team 5Genç Captain)",
+        text: "🏆 **Awards & Honors Summary**:\n\n• **TEKNOFEST 2026 — 3rd Place in Türkiye** — *T3 Foundation & Ministry of Industry and Technology*\n  **Project**: 5G & AI Smart Road Safety (Team 5Genç Captain)",
         actionLinks: [
           { label: "Jump to Awards Section 🏆", href: "#awards", isAnchor: true },
           { label: "Jump to Projects Section 🚀", href: "#work", isAnchor: true },
@@ -314,7 +314,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
   if (has("teknofest", "yol güvenliği", "road safety", "5genç", "5genc", "yolo", "yolov11", "kaptan", "captain")) {
     if (locale === "tr") {
       return {
-        text: "🚦 **Akıllı Yol Güvenliği (TEKNOFEST 2026 — 5Genç)**:\n\n• **Takım**: 5Genç (Takım Kaptanı: Mert Ceren)\n• **Mert'in Rolü**: Takım Kaptanı, Proje Koordinatörü & AI/ML Mühendisi\n• **Teknolojiler**: Python, YOLOv11, Bilgisayarlı Görü, 5G Düşük Gecikmeli İletim\n• **Aşama**: Tamamlandı — Ağustos 2026 (TEKNOFEST 2026 Finalisti)\n• **Ölçülen Sonuç**: 0.716 F1 (0.250'den yükseldi)\n\n**Nasıl Çalışıyor?**\nDestekli ve otonom sürüş senaryolarında yol üzerindeki araç, yaya ve engelleri tespit etmek için Python ortamında YOLOv11 modelleri eğitildi. Tespit edilen risk verileri 5G düşük gecikmeli iletişim altyapısıyla yol hızında araçlara ve kontrol merkezine aktarılıyor 🤖✨",
+        text: "🚦 **Akıllı Yol Güvenliği (TEKNOFEST 2026 — 5Genç)**:\n\n• **Takım**: 5Genç (Takım Kaptanı: Mert Ceren)\n• **Mert'in Rolü**: Takım Kaptanı, Proje Koordinatörü & AI/ML Mühendisi\n• **Teknolojiler**: Python, YOLOv11, Bilgisayarlı Görü, 5G Düşük Gecikmeli İletim\n• **Derece**: Türkiye 3.sü (TEKNOFEST 2026)\n• **Ölçülen Sonuç**: 0.716 F1 (0.250'den yükseldi)\n\n**Nasıl Çalışıyor?**\nDestekli ve otonom sürüş senaryolarında yol üzerindeki araç, yaya ve engelleri tespit etmek için Python ortamında YOLOv11 modelleri eğitildi. Tespit edilen risk verileri 5G düşük gecikmeli iletişim altyapısıyla yol hızında araçlara ve kontrol merkezine aktarılıyor 🤖✨",
         actionLinks: [
           { label: "Akıllı Yol Güvenliği Vaka İncelemesi ↗", href: "/work/smart-road-safety" },
           { label: "Ödüller & TEKNOFEST 🏆", href: "#awards", isAnchor: true },
@@ -322,7 +322,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
       };
     } else {
       return {
-        text: "🚦 **Smart Road Safety (TEKNOFEST 2026 — 5Genç)**:\n\n• **Team**: 5Genç (Team Captain: Mert Ceren)\n• **Mert's Role**: Team Captain, Project Coordinator & AI/ML Engineer\n• **Tech**: Python, YOLOv11, Computer Vision, Low-latency 5G\n• **Stage**: Completed — August 2026 (TEKNOFEST 2026 Finalist)\n• **Measured result**: F1 0.716, up from 0.250\n\n**How it works:**\nPairs scenario-trained YOLOv11 vision models with low-latency 5G communication to detect hazards, vehicles, and pedestrians in real time for assisted and autonomous driving.",
+        text: "🚦 **Smart Road Safety (TEKNOFEST 2026 — 5Genç)**:\n\n• **Team**: 5Genç (Team Captain: Mert Ceren)\n• **Mert's Role**: Team Captain, Project Coordinator & AI/ML Engineer\n• **Tech**: Python, YOLOv11, Computer Vision, Low-latency 5G\n• **Result**: 3rd in Türkiye (TEKNOFEST 2026)\n• **Measured result**: F1 0.716, up from 0.250\n\n**How it works:**\nPairs scenario-trained YOLOv11 vision models with low-latency 5G communication to detect hazards, vehicles, and pedestrians in real time for assisted and autonomous driving.",
         actionLinks: [
           { label: "View Smart Road Safety Case Study ↗", href: "/en/work/smart-road-safety" },
           { label: "Awards Section 🏆", href: "#awards", isAnchor: true },

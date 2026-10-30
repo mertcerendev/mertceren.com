@@ -61,7 +61,7 @@ export const projects: Project[] = [
     year: "2026",
     category: "TEKNOFEST · AI & 5G",
     description:
-      "An intelligent road-safety system pairing 5G connectivity with real-time computer vision — YOLO-based detection models trained in Python for assisted and autonomous driving scenarios. Built with Team 5Genç for TEKNOFEST 2026.",
+      "An intelligent road-safety system pairing 5G connectivity with real-time computer vision — YOLO-based detection models trained in Python for assisted and autonomous driving scenarios. Placed 3rd in Türkiye at TEKNOFEST 2026 with Team 5Genç.",
     tags: ["Python", "YOLOv11", "Computer Vision", "5G"],
     href: "#", // EDIT: project/demo link if public
     image: "/projects/road-safety.png",
@@ -73,7 +73,7 @@ export const projects: Project[] = [
       facts: [
         { label: "Role", value: "Team Captain, Project Coordinator & AI/ML Engineer" },
         { label: "Team", value: "5Genç" },
-        { label: "Stage", value: "Completed (TEKNOFEST 2026)" },
+        { label: "Result", value: "3rd in Türkiye (TEKNOFEST 2026)" },
         { label: "Measured F1", value: "0.716, up from 0.250" },
       ],
       challenge:
@@ -81,7 +81,7 @@ export const projects: Project[] = [
       approach:
         "The perception layer was my own hands-on work: YOLO-family models, trained and iterated in Python on scenario-specific datasets until they held up at road speed. Rather than one model carrying every label, detection was split into separately trained experts — adding or removing one is a line in a config file, not a change to the code. The 5G transport carrying those detections was the team's infrastructure side, and as captain I coordinated where the two halves met: what the models emit, what the network expects, and where the deadline actually sat.",
       outcome:
-        "The competition run closed in August 2026. Measured against the official ground truth on Turkcell's validation footage, the delivered system scored an F1 of 0.716 — up from 0.250 over three iterations. Most of that climb came from calibration rather than retraining, which is not where I expected to find it. The plate model reached mAP@50 0.992 at 113 FPS on a Tesla T4, with the machine offline and inside a ten-minute budget.",
+        "Team 5Genç finished 3rd in Türkiye at TEKNOFEST 2026. Measured against the official ground truth on Turkcell's validation footage, the delivered system scored an F1 of 0.716 — up from 0.250 over three iterations. Most of that climb came from calibration rather than retraining, which is not where I expected to find it. The plate model reached mAP@50 0.992 at 113 FPS on a Tesla T4, with the machine offline and inside a ten-minute budget.",
     },
   },
   {
@@ -317,7 +317,7 @@ export type Award = {
 export const awards: Award[] = [
   {
     year: "2026",
-    title: "TEKNOFEST 2026 Finalist",
+    title: "TEKNOFEST 2026 — 3rd Place in Türkiye",
     issuer: "T3 Foundation & Ministry of Industry and Technology",
     project: "5G & AI Smart Road Safety",
   },
@@ -338,6 +338,11 @@ export const awardsGallery: Array<{
   width: number;
   height: number;
 }> = [
+  { src: "/gallery/awards-08.webp", width: 853, height: 640 },
+  { src: "/gallery/awards-09.webp", width: 853, height: 640 },
+  { src: "/gallery/awards-10.webp", width: 853, height: 640 },
+  { src: "/gallery/awards-11.webp", width: 853, height: 640 },
+  { src: "/gallery/awards-12.webp", width: 960, height: 640 },
   { src: "/gallery/awards-01.webp", width: 853, height: 640 },
   { src: "/gallery/awards-02.webp", width: 853, height: 640 },
   { src: "/gallery/awards-03.webp", width: 853, height: 640 },

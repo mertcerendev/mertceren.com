@@ -13,7 +13,7 @@ export function Awards() {
   const { awards, ui } = useContent();
   const stripRef = useRef<HTMLDivElement>(null);
   /* One observer for the whole strip rather than one per photo: they sit
-     side by side and arrive together, so seven observers would all fire
+     side by side and arrive together, so twelve observers would all fire
      within a few hundred milliseconds of each other anyway. */
   const developed = useInView(stripRef, { once: true, margin: "-8% 0px" });
   const [active, setActive] = useState(0);
@@ -109,7 +109,7 @@ export function Awards() {
                last photo is handed to the browser as a back gesture. */
             className="-mx-5 overflow-x-auto overscroll-x-contain scroll-pl-5 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:overflow-hidden sm:[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
           >
-            <div className="flex w-max px-5 sm:animate-marquee sm:px-0 sm:will-change-transform sm:[animation-direction:reverse] sm:[animation-duration:55s] sm:hover:[animation-play-state:paused]">
+            <div className="flex w-max px-5 sm:animate-marquee sm:px-0 sm:will-change-transform sm:[animation-direction:reverse] sm:[animation-duration:95s] sm:hover:[animation-play-state:paused]">
               {[false, true].map((hidden) => (
                 <div
                   key={String(hidden)}
@@ -135,8 +135,8 @@ export function Awards() {
                       /* Comes up out of the developer: grey and soft, then
                          sharp and in colour. The filter is on the image and
                          not on a wrapper - blurring the row instead would
-                         ask the browser to rasterise and blur a 4545px box,
-                         where this is seven 234px ones. */
+                         ask the browser to rasterise and blur a 7500px box,
+                         where this is twelve 299px ones. */
                       className={`h-auto w-[78vw] shrink-0 snap-start rounded-xl border hairline object-cover transition-[filter] duration-[1400ms] ease-out sm:h-56 sm:w-auto ${
                         developed
                           ? "blur-[0px] grayscale-0"

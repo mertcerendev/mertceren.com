@@ -33,7 +33,7 @@ export const projects: Project[] = [
     year: "2026",
     category: "TEKNOFEST · Yapay Zekâ & 5G",
     description:
-      "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı bir yol güvenliği sistemi — destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı tespit modelleri. TEKNOFEST 2026 için 5Genç takımıyla geliştirildi.",
+      "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı bir yol güvenliği sistemi — destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı tespit modelleri. 5Genç takımıyla TEKNOFEST 2026'da Türkiye üçüncüsü oldu.",
     tags: ["Python", "YOLOv11", "Bilgisayarlı Görü", "5G"],
     href: "#",
     image: "/projects/road-safety.png",
@@ -45,7 +45,7 @@ export const projects: Project[] = [
       facts: [
         { label: "Rol", value: "Takım Kaptanı, Proje Koordinatörü & AI/ML Mühendisi" },
         { label: "Takım", value: "5Genç" },
-        { label: "Aşama", value: "Tamamlandı (TEKNOFEST 2026)" },
+        { label: "Derece", value: "Türkiye 3.sü (TEKNOFEST 2026)" },
         { label: "Ölçülen F1", value: "0.716 — 0.250'den yükseldi" },
       ],
       challenge:
@@ -53,7 +53,7 @@ export const projects: Project[] = [
       approach:
         "Algı katmanı doğrudan benim elimden çıktı: YOLO ailesi modellerini senaryoya özel veri setleriyle Python'da eğitip yol hızında ayakta kalana kadar yineledim. Tek bir model bütün etiketleri taşımak yerine tespit, ayrı ayrı eğitilen uzman modellere bölündü — bir model eklemek ya da çıkarmak koda değil, bir yapılandırma satırına dokunmak demekti. Bu tespitleri taşıyan 5G tarafı takımın altyapı işiydi; kaptan olarak iki yarının nerede buluştuğunu koordine ettim: modeller ne üretiyor, ağ ne bekliyor ve teslim tarihi gerçekte nerede duruyor.",
       outcome:
-        "Yarışma süreci Ağustos 2026'da tamamlandı. Turkcell'in doğrulama videosunda resmî ground truth'a karşı ölçülen sistem 0.716 F1 skoru aldı — üç yinelemede 0.250'den buraya geldi. Bu tırmanışın büyük kısmı yeniden eğitimden değil kalibrasyondan geldi; açıkçası aradığım yer orası değildi. Plaka modeli Tesla T4 üzerinde 0.992 mAP@50 değerini 113 FPS'te, internet kapalıyken ve on dakikalık bütçenin içinde tuttu.",
+        "5Genç, TEKNOFEST 2026'da yarışmayı Türkiye üçüncüsü olarak tamamladı. Turkcell'in doğrulama videosunda resmî ground truth'a karşı ölçülen sistem 0.716 F1 skoru aldı — üç yinelemede 0.250'den buraya geldi. Bu tırmanışın büyük kısmı yeniden eğitimden değil kalibrasyondan geldi; açıkçası aradığım yer orası değildi. Plaka modeli Tesla T4 üzerinde 0.992 mAP@50 değerini 113 FPS'te, internet kapalıyken ve on dakikalık bütçenin içinde tuttu.",
     },
   },
   {
@@ -353,7 +353,7 @@ export const ui: Ui = {
 export const awards = [
   {
     year: "2026",
-    title: "TEKNOFEST 2026 Finalisti",
+    title: "TEKNOFEST 2026 Türkiye Üçüncüsü",
     issuer: "T3 Vakfı & Sanayi ve Teknoloji Bakanlığı",
     project: "5G & Yapay Zeka ile Akıllı Yol Güvenliği",
   },
