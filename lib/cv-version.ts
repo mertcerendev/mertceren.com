@@ -23,4 +23,4 @@
  * Nothing links to the preview from outside, so a changing name costs
  * nothing there.
  */
-export const cvVersion = "2026-08-13c";
+export const cvVersion = "2026-10-30";
