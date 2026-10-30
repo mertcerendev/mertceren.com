@@ -1,5 +1,5 @@
 /**
- * Bumped every time public/Mert_Ceren_CV.pdf and its .jpg preview are
+ * Bumped every time public/Mert_Ceren_CV.pdf and its .jpg previews are
  * replaced. It rides along as a query string on the CV links in the contact
  * modal, which is what actually gets a returning visitor the new file.
  *
@@ -18,7 +18,8 @@
  * entry nobody will remember to keep. So rename the file to match whenever
  * this changes:
  *
- *   public/Mert_Ceren_CV-<cvVersion>.jpg
+ *   public/Mert_Ceren_CV-<cvVersion>-p1.jpg
+ *   public/Mert_Ceren_CV-<cvVersion>-p2.jpg
  *
  * Nothing links to the preview from outside, so a changing name costs
  * nothing there.

@@ -176,20 +176,27 @@ export function Contact() {
               </div>
 
               {/* CV Preview Document View */}
-              <div className="my-2 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 bg-black/60 flex items-center justify-center">
-                {/* A single known file, so its intrinsic size can be stated
-                    outright — that keeps `w-auto` working and the border
-                    hugging the page instead of the box. Opened deliberately
-                    and read rather than glanced at, so it is served
-                    generously; AVIF still lands far under the raw JPEG. */}
-                <Image
-                  src={`/Mert_Ceren_CV-${cvVersion}.jpg`}
-                  alt={`${profile.name} Özgeçmiş CV`}
-                  width={1653}
-                  height={2339}
-                  sizes="(max-width: 1024px) 100vw, 1024px"
-                  className="max-h-full w-auto max-w-full object-contain rounded-xl shadow-2xl border hairline"
-                />
+              {/* data-lenis-prevent: Lenis listens above this box and would
+                  otherwise take the wheel, leaving page two out of reach.
+                  Pages are sized by width and stacked from the top, because
+                  centring content taller than the box cuts off its start. */}
+              <div
+                data-lenis-prevent
+                className="my-2 min-h-0 flex-1 overflow-y-auto overscroll-contain p-4 sm:p-6 bg-black/60"
+              >
+                <div className="mx-auto flex max-w-3xl flex-col gap-4 sm:gap-6">
+                  {[1, 2].map((page) => (
+                    <Image
+                      key={page}
+                      src={`/Mert_Ceren_CV-${cvVersion}-p${page}.jpg`}
+                      alt={`${profile.name} ${isTr ? "özgeçmiş, sayfa" : "CV, page"} ${page}`}
+                      width={1653}
+                      height={2339}
+                      sizes="(max-width: 1024px) 100vw, 768px"
+                      className="h-auto w-full rounded-xl shadow-2xl border hairline"
+                    />
+                  ))}
+                </div>
               </div>
 
               {/* Footer Actions */}

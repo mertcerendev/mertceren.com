@@ -52,7 +52,7 @@ other, which is what keeps the two languages from drifting apart.
 - `featuredRepos` — the curated fallback shown when the GitHub API cannot be reached
 - `socials`, `site` — links and SEO metadata
 
-**Replacing the CV:** drop the new PDF and its preview JPG into `public/`, then
+**Replacing the CV:** drop the new PDF and one preview JPG per page into `public/`, then
 bump [`lib/cv-version.ts`](lib/cv-version.ts). That string is both the PDF's
 cache-busting query and the JPG's filename suffix; without bumping it, visitors
 keep being served the old one from cache.
