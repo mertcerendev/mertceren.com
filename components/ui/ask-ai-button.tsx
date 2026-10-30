@@ -64,7 +64,7 @@ export function AskAiButton({
         variant === "glass" &&
           "border border-white/20 bg-white/5 text-white backdrop-blur-md hover:border-accent hover:bg-accent/15 hover:text-accent shadow-sm",
         variant === "card" &&
-          "border border-white/25 bg-black/40 text-white/90 backdrop-blur-md hover:border-accent hover:bg-accent/20 hover:text-accent shadow-lg shadow-black/20",
+          "border border-white/25 bg-black/50 text-white/90 hover:border-accent hover:bg-accent/20 hover:text-accent shadow-lg shadow-black/20",
         variant === "subtle" &&
           "hairline bg-surface/60 text-muted hover:border-accent/60 hover:bg-accent/10 hover:text-foreground",
         variant === "ghost" &&

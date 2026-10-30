@@ -1,8 +1,6 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
-import { useScroll } from "motion/react";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { localePath } from "@/lib/content";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -10,13 +8,8 @@ import { ProjectCard } from "@/components/ui/project-card";
 import { Magnetic } from "@/components/ui/magnetic-button";
 
 export function Works() {
-  const stackRef = useRef<HTMLDivElement>(null);
   const locale = useLocale();
   const { projects, ui } = useContent();
-  const { scrollYProgress } = useScroll({
-    target: stackRef,
-    offset: ["start start", "end end"],
-  });
 
   return (
     <section id="work" className="px-5 py-24 sm:px-8 sm:py-32 lg:px-12">
@@ -26,16 +19,9 @@ export function Works() {
         meta={`${projects.length} ${ui.sections.work.metaSuffix}`}
       />
 
-      <div ref={stackRef} className="mt-8">
+      <div className="mt-8">
         {projects.map((project, i) => (
-          <ProjectCard
-            key={project.slug}
-            project={project}
-            index={i}
-            progress={scrollYProgress}
-            range={[i / projects.length, 1]}
-            targetScale={1 - (projects.length - i) * 0.04}
-          />
+          <ProjectCard key={project.slug} project={project} index={i} />
         ))}
       </div>
 

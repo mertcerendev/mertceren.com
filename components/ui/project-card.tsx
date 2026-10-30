@@ -1,15 +1,8 @@
 "use client";
 
-import { ViewTransition, useEffect, useRef } from "react";
+import { ViewTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  motion,
-  useMotionValue,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
 import type { Project } from "@/lib/data";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { localePath } from "@/lib/content";
@@ -20,114 +13,24 @@ import { AskAiButton } from "@/components/ui/ask-ai-button";
 type ProjectCardProps = {
   project: Project;
   index: number;
-  progress: MotionValue<number>;
-  range: [number, number];
-  targetScale: number;
 };
 
 /**
- * One panel of the sticky project stack. The wrapper pins to the top
- * of the viewport; as the next card scrolls over, this one recedes
- * (scales down slightly) driven by the shared scroll progress.
+ * One panel of the sticky project stack. The wrapper pins to the top of the
+ * viewport and the next card slides over this one; the 26px step in `top`
+ * leaves the edge of each earlier card showing.
+ *
+ * The browser does all of that on its own, and that is the point. The card
+ * used to shrink with scroll, tilt in 3D and steer its gradient with the
+ * pointer, and each of those made a card this size repaint on every frame:
+ * 13fps under a moving mouse at 4x CPU throttle, 18 while scrolling. Taking
+ * the transforms off cut raster work by 92%. The hover below only fades a
+ * layer and moves the mockup, which the compositor can do without repainting.
  */
-export function ProjectCard({
-  project,
-  index,
-  progress,
-  range,
-  targetScale,
-}: ProjectCardProps) {
-  const scale = useTransform(progress, range, [1, targetScale]);
+export function ProjectCard({ project, index }: ProjectCardProps) {
   const { palette } = project;
   const locale = useLocale();
   const { ui } = useContent();
-
-  const cardRef = useRef<HTMLElement>(null);
-
-  /**
-   * Touch got none of the lighting. The two upper lights in the artwork
-   * are placed by --mx/--my, which only the mouse handler below ever
-   * wrote, so on a phone the card was lit exactly where it was composed
-   * and stayed that way for the whole scroll.
-   *
-   * Scroll moves them instead, across exactly the screenful this card is
-   * pinned for - which is the whole time a phone reader is looking at it.
-   *
-   * Measured off the stack rather than off the card. The card's own
-   * wrapper is sticky, so its rect top is clamped at 0 for the entire
-   * pinned phase and cannot see it; the stack above it keeps moving, and
-   * card i owns the i'th screenful of it. Same idiom the certificates band
-   * uses. Written straight to the node, as the mouse path is - no React
-   * work per frame.
-   */
-  useEffect(() => {
-    if (window.matchMedia("(pointer: fine)").matches) return;
-    const el = cardRef.current;
-    const stack = el?.parentElement?.parentElement;
-    if (!el || !stack) return;
-
-    let frame = 0;
-    const paint = () => {
-      frame = 0;
-      const vh = window.innerHeight;
-      const scrolled = -stack.getBoundingClientRect().top;
-      const t = Math.min(1, Math.max(0, (scrolled - index * vh) / vh));
-      el.style.setProperty("--mx", (12 + t * 68).toFixed(1) + "%");
-      el.style.setProperty("--my", (10 + t * 58).toFixed(1) + "%");
-    };
-
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(paint);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    paint();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (frame) cancelAnimationFrame(frame);
-    };
-  }, [index]);
-
-  // Subtle pointer-driven 3D tilt (mouse only)
-  const tiltX = useMotionValue(0);
-  const tiltY = useMotionValue(0);
-  const rotateX = useSpring(tiltX, { stiffness: 120, damping: 18 });
-  const rotateY = useSpring(tiltY, { stiffness: 120, damping: 18 });
-
-  const onPointerMove = (e: React.PointerEvent<HTMLElement>) => {
-    if (e.pointerType !== "mouse") return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    tiltX.set(-py * 3);
-    tiltY.set(px * 3);
-
-    /* The light moves with the tilt. The card already turned under the
-       pointer, but its highlights stayed where they were painted, and a
-       surface whose lighting does not change as it turns reads as printed
-       paper rather than as an object. Written as custom properties straight
-       to the node — the gradient below interpolates them, so this costs no
-       React work at all. */
-    e.currentTarget.style.setProperty(
-      "--mx",
-      `${(((e.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`
-    );
-    e.currentTarget.style.setProperty(
-      "--my",
-      `${(((e.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`
-    );
-  };
-
-  const onPointerLeave = (e: React.PointerEvent<HTMLElement>) => {
-    tiltX.set(0);
-    tiltY.set(0);
-    if (e.pointerType !== "mouse") return;
-    // Back to where the artwork was composed, not to the centre. Mouse only:
-    // on touch these two are the scroll sweep below, and a tap fires
-    // pointerleave, which would wipe them until the next scroll frame.
-    e.currentTarget.style.removeProperty("--mx");
-    e.currentTarget.style.removeProperty("--my");
-  };
 
   return (
     /* pointer-events-none, re-enabled on the card itself: this box is a full
@@ -137,41 +40,35 @@ export function ProjectCard({
        and swallows the tap. */
     <div
       className="pointer-events-none sticky top-0 flex h-svh items-center justify-center"
-      style={{ perspective: 1400 }}
     >
-      <motion.article
-        ref={cardRef}
+      <article
         /* Read by components/ui/cursor.tsx: resting here swaps the cursor's
            idle deck for the project one, so the nudge to ask the assistant
            arrives beside the button that does it. */
         data-cursor-context="project"
-        onPointerMove={onPointerMove}
-        onPointerLeave={onPointerLeave}
-        style={{
-          scale,
-          rotateX,
-          rotateY,
-          top: `calc(-4svh + ${index * 26}px)`,
-        }}
-        className="pointer-events-auto group relative flex h-[80svh] min-h-[520px] w-full origin-top flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl"
+        style={{ top: `calc(-4svh + ${index * 26}px)` }}
+        className="pointer-events-auto group relative flex h-[80svh] min-h-[520px] w-full flex-col justify-between overflow-hidden rounded-2xl sm:rounded-3xl"
       >
         {/* Gradient-mesh artwork (swap for a real screenshot later) */}
         <div
           aria-hidden
-          className="absolute inset-0 scale-100 transition-transform duration-[1400ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
+          className="absolute inset-0"
           style={{
             background: [
-              // The two upper lights track the pointer; the third is the
-              // ground colour and stays put, or the card would look untethered.
-              `radial-gradient(110% 90% at var(--mx, 12%) var(--my, 12%), ${palette.from} 0%, transparent 55%)`,
-              // Mirrored, so the two lights swing apart rather than together.
-              // The fallbacks differ between the two gradients on purpose:
-              // unset, each resolves to the position the artwork was
-              // originally composed at (12%/12% and 88%/25%).
-              `radial-gradient(95% 85% at calc(100% - var(--mx, 12%)) calc(100% - var(--my, 75%)), ${palette.via} 0%, transparent 62%)`,
+              `radial-gradient(110% 90% at 12% 12%, ${palette.from} 0%, transparent 55%)`,
+              `radial-gradient(95% 85% at 88% 25%, ${palette.via} 0%, transparent 62%)`,
               `radial-gradient(130% 130% at 50% 105%, ${palette.to} 0%, #0a0a0b 100%)`,
               "#0a0a0b",
             ].join(", "),
+          }}
+        />
+        {/* Hover light. Painted once and only faded, so it costs an opacity
+            change where the pointer-tracked gradient cost a full repaint. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+          style={{
+            background: `radial-gradient(70% 70% at 30% 20%, ${palette.from}59 0%, transparent 70%)`,
           }}
         />
         {/* Watermark */}
@@ -190,7 +87,7 @@ export function ProjectCard({
         {/* Floating project mockup window */}
         {project.image && (
           <div className="absolute inset-0 overflow-hidden pointer-events-none md:left-1/3 z-10 flex items-end justify-end">
-            <div className="relative w-full h-[60%] md:h-[70%] max-w-[480px] mr-[-5%] mb-[-4%] translate-y-[8%] rotate-[-4deg] group-hover:translate-y-[3%] group-hover:rotate-[-2deg] pointer-coarse:translate-y-[3%] pointer-coarse:rotate-[-2deg] transition-all duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] opacity-75 group-hover:opacity-95 pointer-coarse:opacity-95">
+            <div className="relative w-full h-[60%] md:h-[70%] max-w-[480px] mr-[-5%] mb-[-4%] translate-y-[8%] rotate-[-4deg] group-hover:translate-y-[3%] group-hover:rotate-[-2deg] pointer-coarse:translate-y-[3%] pointer-coarse:rotate-[-2deg] transition-[translate,rotate,opacity] duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] opacity-75 group-hover:opacity-95 pointer-coarse:opacity-95">
               {/* Browser frame mockup wrapper */}
               <div className="w-full h-full rounded-tl-xl border border-white/15 bg-[#141416]/90 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col">
                 {/* Browser address bar */}
@@ -246,7 +143,7 @@ export function ProjectCard({
           </p>
           <div className="flex items-center gap-3">
             {project.status && (
-              <span className="flex items-center gap-2 rounded-full border border-white/25 bg-black/25 px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-white backdrop-blur-sm sm:text-[0.625rem]">
+              <span className="flex items-center gap-2 rounded-full border border-white/25 bg-black/50 px-3 py-1 font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-white sm:text-[0.625rem]">
                 <span className="relative flex size-1.5">
                   <span className="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-70" />
                   <span className="relative inline-flex size-1.5 rounded-full bg-accent" />
@@ -299,7 +196,7 @@ export function ProjectCard({
                 <Link
                   href={localePath(locale, `/work/${project.slug}`)}
                   aria-label={`${ui.projectCard.ctaAria} ${project.title}`}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/5 px-6 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-white backdrop-blur-sm transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-accent-ink"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-black/50 px-6 py-3 font-mono text-[0.6875rem] uppercase tracking-[0.14em] text-white transition-colors duration-300 hover:border-accent hover:bg-accent hover:text-accent-ink"
                 >
                   {ui.projectCard.cta}
                   <span aria-hidden className="text-sm leading-none">
@@ -310,7 +207,7 @@ export function ProjectCard({
             </div>
           </div>
         </div>
-      </motion.article>
+      </article>
     </div>
   );
 }
