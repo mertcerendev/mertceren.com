@@ -109,7 +109,7 @@ export function Awards() {
                last photo is handed to the browser as a back gesture. */
             className="-mx-5 overflow-x-auto overscroll-x-contain scroll-pl-5 snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:overflow-hidden sm:[mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]"
           >
-            <div className="flex w-max px-5 sm:animate-marquee sm:px-0 sm:will-change-transform sm:[animation-direction:reverse] sm:[animation-duration:95s] sm:hover:[animation-play-state:paused]">
+            <div className="flex w-max px-5 sm:animate-marquee sm:px-0 sm:will-change-transform sm:[animation-direction:reverse] sm:[animation-duration:80s] sm:hover:[animation-play-state:paused]">
               {[false, true].map((hidden) => (
                 <div
                   key={String(hidden)}
