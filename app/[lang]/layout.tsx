@@ -13,6 +13,8 @@ import { IdleMode } from "@/components/ui/idle-mode";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { AiAssistant } from "@/components/ui/ai-assistant";
 import { ContextMenu } from "@/components/ui/context-menu";
+import { TabPresence } from "@/components/ui/tab-presence";
+import { ConsoleGreeting } from "@/components/ui/console-greeting";
 import { defaultLocale, getContent, isLocale, localePath, locales } from "@/lib/content";
 import "../globals.css";
 
@@ -208,6 +210,8 @@ export default async function RootLayout({
               <Cursor />
               <IdleMode />
               <ContextMenu />
+              <TabPresence />
+              <ConsoleGreeting />
             </SmoothScroll>
           </ThemeProvider>
         </LocaleProvider>
