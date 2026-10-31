@@ -26,6 +26,7 @@ export const heroStatement = {
 export const socials = [
   { label: "GitHub", href: "https://github.com/mertcerendev" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/mert-ceren-1a7b10297" },
+  { label: "Instagram", href: "https://www.instagram.com/mertt.ceren_/" },
 ] as const;
 
 export type Project = {
@@ -669,7 +670,24 @@ export const ui = {
     srCopied: "Email copied to clipboard",
     srCopy: "Copy email",
   },
-  footer: { backToTop: "Back to top ↑" },
+  footer: {
+    backToTop: "Back to top ↑",
+    pages: "Pages",
+    projects: "Projects",
+    links: "Elsewhere",
+    email: "Email",
+    cv: "CV (PDF)",
+    /** By the hour in Istanbul, each from its hour until the next one. */
+    moods: [
+      { from: 0, text: "probably asleep 😴" },
+      { from: 7, text: "starting on coffee ☕" },
+      { from: 9, text: "probably writing code 💻" },
+      { from: 12, text: "on a lunch break 🍽️" },
+      { from: 13, text: "probably writing code 💻" },
+      { from: 18, text: "on the evening projects 🛠️" },
+      { from: 23, text: "on the night shift 🌙" },
+    ],
+  },
   preloader: "Portfolio",
   notFound: {
     kicker: "Lost reel",

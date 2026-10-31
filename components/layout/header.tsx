@@ -23,6 +23,27 @@ export function Header() {
 
   useMotionValueEvent(scrollY, "change", (y) => setScrolled(y > 24));
 
+  /* Steps out of the way once the footer is coming into view. The footer
+     carries the same links, plus the projects and contact routes, so with
+     both on screen the page list was printed twice — and the page lifting
+     off the footer reads better with nothing pinned over it. Back as soon as
+     the reader scrolls up out of it.
+
+     Watches the footer's own box, which is the one that scrolls in while
+     the footer itself sits pinned underneath it. A sixth of it showing is
+     enough to count: the bottom row and the wordmark, not a sliver. */
+  const [atFooter, setAtFooter] = useState(false);
+  useEffect(() => {
+    const footer = document.querySelector("[data-site-footer]");
+    if (!footer) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setAtFooter(entry.isIntersecting),
+      { threshold: 0.16 }
+    );
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
+
   // Lock page scroll while the overlay menu is open
   useEffect(() => {
     if (lenis) {
@@ -91,10 +112,14 @@ export function Header() {
 
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-50 border-b transition-colors duration-500",
+          // translate is a property of its own in Tailwind v4, so it is
+          // named here or the slide would be a jump. focus-within brings it
+          // back for a keyboard user tabbing into it while it is away.
+          "fixed inset-x-0 top-0 z-50 border-b transition-[color,background-color,border-color,translate] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] focus-within:translate-y-0",
           scrolled && !menuOpen
             ? "hairline bg-background/85 backdrop-blur-md"
-            : "border-transparent"
+            : "border-transparent",
+          atFooter && !menuOpen && "-translate-y-full"
         )}
       >
         <div className="flex items-center justify-between px-5 py-4 sm:px-8 lg:px-12">

@@ -16,6 +16,7 @@ import { ContextMenu } from "@/components/ui/context-menu";
 import { TabPresence } from "@/components/ui/tab-presence";
 import { ConsoleGreeting } from "@/components/ui/console-greeting";
 import { defaultLocale, getContent, isLocale, localePath, locales } from "@/lib/content";
+import { socials } from "@/lib/data";
 import "../globals.css";
 
 const syne = Syne({
@@ -162,10 +163,7 @@ export default async function RootLayout({
           "@type": "EducationalOrganization",
           "name": "Bandırma Onyedi Eylül Üniversitesi",
         },
-        "sameAs": [
-          "https://github.com/mertcerendev",
-          "https://www.linkedin.com/in/mert-ceren-1a7b10297",
-        ],
+        "sameAs": socials.map((social) => social.href),
       },
     ],
   };
