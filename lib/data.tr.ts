@@ -347,6 +347,7 @@ export const ui: Ui = {
     titleB: "kesildi",
     body: "Aradığın sayfa final kurgusuna hiç giremedi — ya da daha sakin bir yere taşındı.",
     cta: "Açılış sahnesine dön",
+    suggest: "Bunu mu arıyordun?",
   },
 };
 

@@ -655,6 +655,7 @@ export const ui = {
     titleB: "was cut",
     body: "The page you're looking for never made the final edit — or it moved somewhere quieter.",
     cta: "Back to the opening scene",
+    suggest: "Were you looking for this?",
   },
 };
 
