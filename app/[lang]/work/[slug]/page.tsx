@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { RevealText } from "@/components/ui/reveal-text";
-import { Magnetic } from "@/components/ui/magnetic-button";
+import { NextProjectPull } from "@/components/ui/next-project-pull";
 import { getContent, isLocale, localePath } from "@/lib/content";
 import { projects } from "@/lib/data";
 import { foreignLang } from "@/lib/foreign";
@@ -249,24 +249,17 @@ export default async function CaseStudyPage({
           </div>
         )}
 
-        {/* Next project */}
-        <div className="mt-24 border-t hairline pt-10 sm:mt-32">
-          <p className="microlabel">{ui.caseStudy.next}</p>
-          <Magnetic strength={0.1}>
-            <Link
-              href={localePath(lang, `/work/${next.slug}`)}
-              className="group mt-4 inline-flex items-baseline gap-5 font-display text-display-lg font-extrabold uppercase tracking-tight transition-colors duration-300 hover:text-accent"
-            >
-              {next.title}
-              <span
-                aria-hidden
-                className="text-display-md transition-transform duration-300 group-hover:translate-x-2"
-              >
-                →
-              </span>
-            </Link>
-          </Magnetic>
-        </div>
+        {/* Next project — a link, and a pull past the end of the page. */}
+        <NextProjectPull
+          key={next.slug}
+          href={localePath(lang, `/work/${next.slug}`)}
+          slug={next.slug}
+          title={next.title}
+          image={next.image}
+          label={ui.caseStudy.next}
+          hint={lang === "tr" ? "Geçmek için kaydırmaya devam et" : "Keep scrolling to open"}
+          opening={lang === "tr" ? "Açılıyor…" : "Opening…"}
+        />
       </main>
       <Footer />
     </>
