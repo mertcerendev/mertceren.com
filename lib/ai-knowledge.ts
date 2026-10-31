@@ -32,7 +32,7 @@ export const MERT_KNOWLEDGE = {
     location: "İstanbul / Bandırma, Türkiye",
     email: "mertceren.2003.mc@gmail.com",
     github: "https://github.com/mertcerendev",
-    linkedin: "https://linkedin.com/in/mertceren",
+    linkedin: "https://www.linkedin.com/in/mert-ceren-1a7b10297",
     status: "Staj ve freelance iş birliklerine açık",
   },
   projects: [
@@ -335,7 +335,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
   if (has("iski", "staj", "intern", "internship", "asistan", "assistant", "etkin kampus", "etkin kampüs")) {
     if (locale === "tr") {
       return {
-        text: "💼 **Mert'in Deneyimleri & İSKİ Stajı**:\n\n• **İSKİ (Yazılım Şube Müdürlüğü)** — *Yazılım Mühendisliği Stajyeri (Haz 2026 — Güncel)*: Bilgi İşlem Dairesi Başkanlığı Yazılım Şube Müdürlüğü bünyesinde 20 günlük zorunlu yazılım mühendisliği stajını gerçekleştiriyor.\n• **BANÜ Bilgi İşlem** — *Öğrenci Asistanı (Ara 2025 — Haz 2026)*: Kullanıcı desteği, donanım kurulumu ve envanter yönetimi.\n• **BANÜ Yazılım Mühendisliği** — *Sınıf Temsilcisi (2024 — Güncel)*: Akademisyenler ve öğrenciler arası iletişim koordinatörü ✨",
+        text: "💼 **Mert'in Deneyimleri & İSKİ Stajı**:\n\n• **İSKİ (Yazılım Şube Müdürlüğü)** — *Yazılım Mühendisliği Stajyeri (Ağu 2026 — Eyl 2026)*: Bilgi İşlem Dairesi Başkanlığı Yazılım Şube Müdürlüğü bünyesinde 20 iş günü süren zorunlu yazılım mühendisliği stajını tamamladı.\n• **BANÜ Bilgi İşlem** — *Öğrenci Asistanı (Ara 2025 — Haz 2026)*: Kullanıcı desteği, donanım kurulumu ve envanter yönetimi.\n• **BANÜ Yazılım Mühendisliği** — *Sınıf Temsilcisi (2024 — Güncel)*: Akademisyenler ve öğrenciler arası iletişim koordinatörü ✨",
         actionLinks: [
           { label: "Hakkımda & Zaman Çizelgesi ↗", href: "#about", isAnchor: true },
           { label: "İletişime Geç ✉️", href: "#contact", isAnchor: true },
@@ -343,7 +343,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
       };
     } else {
       return {
-        text: "💼 **Mert's Experience & İSKİ Internship**:\n\n• **İSKİ (Software Branch Directorate)** — *Software Engineering Intern (Jun 2026 — Present)*: 20-day compulsory software engineering internship at Istanbul Water and Sewerage Administration.\n• **BANÜ IT Department** — *Student Assistant (Dec 2025 — Jun 2026)*: Technical support, hardware installation, and inventory.\n• **BANÜ Software Engineering** — *Class Representative (2024 — Present)*: Coordination between faculty and students.",
+        text: "💼 **Mert's Experience & İSKİ Internship**:\n\n• **İSKİ (Software Branch Directorate)** — *Software Engineering Intern (Aug 2026 — Sep 2026)*: Completed a 20-working-day compulsory software engineering internship at Istanbul Water and Sewerage Administration.\n• **BANÜ IT Department** — *Student Assistant (Dec 2025 — Jun 2026)*: Technical support, hardware installation, and inventory.\n• **BANÜ Software Engineering** — *Class Representative (2024 — Present)*: Coordination between faculty and students.",
         actionLinks: [
           { label: "View About & Timeline ↗", href: "#about", isAnchor: true },
           { label: "Contact Mert ✉️", href: "#contact", isAnchor: true },
