@@ -81,7 +81,13 @@ export function ThemeToggle() {
       // ready rejects when the transition is skipped — a second click before
       // this one has finished, say. The theme has changed either way.
       .catch(() => {});
-    transition.finished.finally(() => root.classList.remove("theme-vt"));
+    // finished rejects too when the browser gives up on the transition — a
+    // hidden window that draws no frames hits its timeout — and .finally()
+    // passes that rejection on, so it is caught here rather than surfacing
+    // as an uncaught error. The class comes off either way.
+    transition.finished
+      .catch(() => {})
+      .finally(() => root.classList.remove("theme-vt"));
   };
 
   return (
