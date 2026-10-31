@@ -669,7 +669,7 @@ export const ui = {
     srCopied: "Email copied to clipboard",
     srCopy: "Copy email",
   },
-  footer: { built: "Built from scratch, no template", backToTop: "Back to top ↑" },
+  footer: { backToTop: "Back to top ↑" },
   preloader: "Portfolio",
   notFound: {
     kicker: "Lost reel",

@@ -351,7 +351,7 @@ export const ui: Ui = {
     srCopied: "E-posta panoya kopyalandı",
     srCopy: "E-postayı kopyala",
   },
-  footer: { built: "Sıfırdan yazıldı, şablon yok", backToTop: "Başa dön ↑" },
+  footer: { backToTop: "Başa dön ↑" },
   preloader: "Portfolyo",
   notFound: {
     kicker: "Kayıp makara",

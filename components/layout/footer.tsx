@@ -43,7 +43,7 @@ export function Footer() {
     <footer className="border-t hairline px-5 pt-10 sm:px-8 lg:px-12">
       <div className="flex flex-wrap items-baseline justify-between gap-x-10 gap-y-4">
         <p className="microlabel">
-          © {new Date().getFullYear()} {profile.name} — {ui.footer.built}
+          © {new Date().getFullYear()} {profile.name}
         </p>
         <p className="microlabel tabular-nums" suppressHydrationWarning>
           {profile.location}
