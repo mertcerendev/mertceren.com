@@ -61,12 +61,12 @@ export const MERT_KNOWLEDGE = {
       category: "İşletme & Web Platformu",
       tech: ["Yapay zekâ destekli geliştirme", "HTML", "C#", "CSS"],
       summary:
-        "Rosso Lounge Bistro için özel geliştirilen dinamik dijital menü, rezervasyon yönetimi ve yönetim paneli çözümü. Yapay zekâ destekli geliştirmeyle kurgulanıp teslim edildi.",
+        "Rosso Lounge Bistro için özel geliştirilen dinamik dijital menü ve yönetim paneli çözümü. Yapay zekâ destekli geliştirmeyle kurgulanıp teslim edildi.",
       href: "/work/rosso-lounge",
     },
   ],
   openSourceRepos: [
-    { name: "bwai-IK-Karar-Motoru", desc: "İnsan Kaynakları Karar Destek Motoru (Python / Yapay Zekâ)", href: "https://github.com/mertcerendev/bwai-IK-Karar-Motoru" },
+    { name: "bwai-IK-Karar-Motoru", desc: "Yapay zekâ destekli İnsan Kaynakları aday değerlendirme ve karar destek motoru (JavaScript)", href: "https://github.com/mertcerendev/bwai-IK-Karar-Motoru" },
     { name: "RossoLoungeWeb", desc: "Rosso Lounge Bistro Web Platformu Kaynak Kodları", href: "https://github.com/mertcerendev/RossoLoungeWeb" },
     { name: "mertceren.com", desc: "Mert Ceren Kişisel Portfolyo Web Uygulaması", href: "https://github.com/mertcerendev/mertceren.com" },
   ],
@@ -356,14 +356,14 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
   if (has("sertifika", "certificate", "btk", "edx", "udemy", "belge")) {
     if (locale === "tr") {
       return {
-        text: `📜 **Sertifikalar (Tam ${MERT_KNOWLEDGE.certificatesCount} tane onaylı sertifika topladık! 😄)**:\n\nMert Ceren'in yapay zekâ ve yazılım alanında **${MERT_KNOWLEDGE.certificatesCount} adet onaylı sertifikası** var.\n\n• **BTK Akademi**: Versiyon Kontrolleri — Git ve GitHub\n• **BTK Akademi**: Bilgisayarlı Görü ve YOLO\n• **edX & HP**: Generative AI for Games Development ✨`,
+        text: `📜 **Sertifikalar (Tam ${MERT_KNOWLEDGE.certificatesCount} tane sertifika topladık! 😄)**:\n\nMert Ceren'in yapay zekâ ve yazılım alanında **${MERT_KNOWLEDGE.certificatesCount} adet sertifikası** var.\n\n• **BTK Akademi**: Versiyon Kontrolleri — Git ve GitHub\n• **BTK Akademi**: Anthropic Claude\n• **edX & HP**: Generative AI for Games Development ✨`,
         actionLinks: [
           { label: `Sertifikalar Galerisini Aç (${MERT_KNOWLEDGE.certificatesCount}) 📜`, href: "#certificates", isAnchor: true },
         ],
       };
     } else {
       return {
-        text: `📜 **Certificates Summary**:\n\nMert Ceren holds **${MERT_KNOWLEDGE.certificatesCount} verified professional certificates** in AI, Computer Vision, and Software Engineering.\n\nKey credentials include BTK Version Control with Git and GitHub, BTK YOLO Computer Vision, and edX HP Generative AI.`,
+        text: `📜 **Certificates Summary**:\n\nMert Ceren holds **${MERT_KNOWLEDGE.certificatesCount} certificates** in AI and Software Engineering.\n\nKey credentials include BTK Akademi's Version Control with Git and GitHub, BTK Akademi's Anthropic Claude, and HP & edX's Generative AI for Games Development.`,
         actionLinks: [
           { label: `Open Certificates Gallery (${MERT_KNOWLEDGE.certificatesCount}) 📜`, href: "#certificates", isAnchor: true },
         ],
@@ -433,7 +433,7 @@ export function getLocalAiResponse(query: string, locale: "tr" | "en" = "tr"): {
   if (has("merhaba", "selam", "sa", "hey", "günaydın", "iyi günler", "hello", "hi", "good morning")) {
     if (locale === "tr") {
       return {
-        text: "Selam! 👋 Ben Mert Ceren'in yapay zekâ asistanıyım, hoş geldin! 😄☕\n\nMert Ceren; Bandırma Onyedi Eylül Üniversitesi Yazılım Mühendisliği öğrencisi, TEKNOFEST 2026 **5Genç** Takım Kaptanı ve yapay zekâ geliştiricisidir.\n\nSöyle bakalım, projeleri mi, 22 sertifikayı mı yoksa iletişim bilgilerini mi merak ediyorsun? ✨",
+        text: `Selam! 👋 Ben Mert Ceren'in yapay zekâ asistanıyım, hoş geldin! 😄☕\n\nMert Ceren; Bandırma Onyedi Eylül Üniversitesi Yazılım Mühendisliği öğrencisi, TEKNOFEST 2026 **5Genç** Takım Kaptanı ve yapay zekâ geliştiricisidir.\n\nSöyle bakalım, projeleri mi, ${MERT_KNOWLEDGE.certificatesCount} sertifikayı mı yoksa iletişim bilgilerini mi merak ediyorsun? ✨`,
         actionLinks: [
           { label: "Seçilmiş Projeler 🚀", href: "#work", isAnchor: true },
           { label: "Ödüller & Dereceler 🏆", href: "#awards", isAnchor: true },

@@ -233,7 +233,7 @@ MERT CEREN BİLGİ TABANI (yalnızca bunlara dayan):
 - Diğer Projeler: Sanal Kampüs (360° tour & envanter yönetimi), Rosso Lounge Bistro Web Platformu, bwai İK Karar Motoru.
 - Yetenekler: C#, Python, YOLOv8 / YOLOv11 ile nesne tespiti, bilgisayarlı görü, prompt mühendisliği (Gemini, Claude), yapay zekâ destekli yazılım geliştirme, HTML, CSS, Git & GitHub, Microsoft Office. Kişisel: analitik düşünme, problem çözme, takım çalışması, etkinlik koordinasyonu.
 - Bu listede olmayan bir teknoloji (React, .NET, SignalR, Docker, PostgreSQL gibi) Mert'in bildiği bir şey DEĞİLDİR; ziyaretçi sorarsa bunları biliyormuş gibi konuşmazsın.
-- Sertifikalar: Google & BTK Akademi Yapay Zekâ, BTK YOLO Bilgisayarlı Görü, edX HP AI & Data Science dahil ${MERT_KNOWLEDGE.certificatesCount} adet onaylı sertifika.
+- Sertifikalar: BTK Akademi Versiyon Kontrolleri (Git ve GitHub), BTK Akademi Anthropic Claude, BTK Akademi C# Programlama, HP & edX Generative AI for Games Development dahil ${MERT_KNOWLEDGE.certificatesCount} adet sertifika. Bunlar dışında bir sertifika adı saymazsın.
 - Ödüller: TEKNOFEST 2026 Türkiye Üçüncüsü (T3 Vakfı & Sanayi ve Teknoloji Bakanlığı).
 - İletişim: E-posta: ${MERT_KNOWLEDGE.profile.email}, Konum: ${MERT_KNOWLEDGE.profile.location}.
 
