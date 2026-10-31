@@ -117,8 +117,8 @@ export function AiAssistant() {
   const [hasUnread, setHasUnread] = useState(true);
 
   const initialWelcomeText = isTr
-    ? "Selam! 👋 Ben Mert Ceren'in yapay zekâ asistanıyım, hoş geldin! 😄☕\n\nMert'in TEKNOFEST 2026 5Genç projesini, yeteneklerini, 22 onaylı sertifikasını veya BANÜ Yazılım Mühendisliği eğitimini mi merak ediyorsun? Sor bakalım, sana seve seve yardımcı olurum! ✨"
-    : "Hello! 👋 I'm Mert Ceren's AI Assistant, welcome! 😄☕\n\nCurious about Mert's TEKNOFEST 2026 project, skills, 22 certificates, or BANÜ Software Engineering degree? Ask away, I'm happy to help! ✨";
+    ? `Selam! 👋 Ben Mert Ceren'in yapay zekâ asistanıyım, hoş geldin! 😄☕\n\nMert'in TEKNOFEST 2026 5Genç projesini, yeteneklerini, ${MERT_KNOWLEDGE.certificatesCount} sertifikasını veya BANÜ Yazılım Mühendisliği eğitimini mi merak ediyorsun? Sor bakalım, sana seve seve yardımcı olurum! ✨`
+    : `Hello! 👋 I'm Mert Ceren's AI Assistant, welcome! 😄☕\n\nCurious about Mert's TEKNOFEST 2026 project, skills, ${MERT_KNOWLEDGE.certificatesCount} certificates, or BANÜ Software Engineering degree? Ask away, I'm happy to help! ✨`;
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
