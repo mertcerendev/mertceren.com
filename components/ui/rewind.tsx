@@ -215,13 +215,14 @@ function FlyingChick({ from, seconds }: { from: { x: number; y: number }; second
 }
 
 /**
- * The way back up from the middle of the page: a film reel in the bottom-
- * left corner. It turns as the page scrolls — so during a rewind it spins
+ * The way back up from the middle of the page: a film reel stacked above
+ * the assistant's launcher in the bottom-right corner. It turns as the page scrolls — so during a rewind it spins
  * backwards, fast — and the ring around it fills with how far down you are.
  *
  * Out of the way where it would only repeat something: on the first screen,
- * where there is nothing to rewind, and over the footer, which has its own
- * Rewind button and chick. Watches the footer box per page, because a client
+ * where there is nothing to rewind, over the footer, which has its own
+ * Rewind button and chick, and while the assistant is open, whose panel
+ * covers that corner. Watches the footer box per page, because a client
  * navigation replaces it and an observer would be left holding the old one.
  */
 export function RewindReel() {
@@ -232,6 +233,7 @@ export function RewindReel() {
   const [pastFirstScreen, setPastFirstScreen] = useState(false);
   const [atFooter, setAtFooter] = useState(false);
   const [rewinding, setRewinding] = useState(false);
+  const [assistantOpen, setAssistantOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setPastFirstScreen(window.scrollY > window.innerHeight * 0.8);
@@ -252,13 +254,19 @@ export function RewindReel() {
 
   useEffect(() => {
     const root = document.documentElement;
-    const observer = new MutationObserver(() => setRewinding("rewinding" in root.dataset));
-    observer.observe(root, { attributes: true, attributeFilter: ["data-rewinding"] });
+    const observer = new MutationObserver(() => {
+      setRewinding("rewinding" in root.dataset);
+      setAssistantOpen(root.hasAttribute("data-assistant-open"));
+    });
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ["data-rewinding", "data-assistant-open"],
+    });
     return () => observer.disconnect();
   }, []);
 
   // Stays up while it is spinning back, so the reel can be seen running down.
-  const shown = rewinding || (pastFirstScreen && !atFooter);
+  const shown = !assistantOpen && (rewinding || (pastFirstScreen && !atFooter));
 
   return (
     <AnimatePresence>
@@ -272,7 +280,9 @@ export function RewindReel() {
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.6 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="group fixed bottom-5 left-5 z-[45] flex size-12 items-center justify-center rounded-full border hairline bg-background/80 text-muted backdrop-blur-md transition-colors duration-300 hover:border-accent/50 hover:text-accent sm:bottom-8 sm:left-8"
+          /* Centred over the 56px launcher at bottom-6 right-6: 24 + 28 - 24
+             from the right edge, and 12px of air above its top. */
+          className="group fixed bottom-[92px] right-7 z-[45] flex size-12 items-center justify-center rounded-full border hairline bg-background/80 text-muted backdrop-blur-md transition-colors duration-300 hover:border-accent/50 hover:text-accent"
         >
           {/* Progress ring: how much film has run. */}
           <svg viewBox="0 0 48 48" aria-hidden className="absolute inset-0 -rotate-90">

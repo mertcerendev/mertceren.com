@@ -290,6 +290,12 @@ export function AiAssistant() {
     }
   }, [messages]);
 
+  /* Announced on <html> so the rewind reel, which sits just above the
+     launcher, can get out of the way: the open panel covers that corner. */
+  useEffect(() => {
+    document.documentElement.toggleAttribute("data-assistant-open", isOpen);
+  }, [isOpen]);
+
   const updateIsOpen = (val: boolean) => {
     setIsOpen(val);
   };
