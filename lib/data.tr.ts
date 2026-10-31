@@ -352,7 +352,7 @@ export const ui: Ui = {
     srCopy: "E-postayı kopyala",
   },
   footer: {
-    backToTop: "Başa dön ↑",
+    backToTop: "Başa sar ◀◀",
     pages: "Sayfalar",
     projects: "Projeler",
     links: "Bağlantılar",
@@ -367,6 +367,11 @@ export const ui: Ui = {
       { from: 18, text: "akşam projelerinde 🛠️" },
       { from: 23, text: "gece mesaisinde 🌙" },
     ],
+  },
+  rewind: {
+    osd: "Geri sar",
+    reel: "Başa sar",
+    chick: "Balonla başa uç",
   },
   preloader: "Portfolyo",
   notFound: {

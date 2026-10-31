@@ -671,7 +671,7 @@ export const ui = {
     srCopy: "Copy email",
   },
   footer: {
-    backToTop: "Back to top ↑",
+    backToTop: "Rewind ◀◀",
     pages: "Pages",
     projects: "Projects",
     links: "Elsewhere",
@@ -687,6 +687,11 @@ export const ui = {
       { from: 18, text: "on the evening projects 🛠️" },
       { from: 23, text: "on the night shift 🌙" },
     ],
+  },
+  rewind: {
+    osd: "Rewind",
+    reel: "Rewind to the top",
+    chick: "Ride the balloon to the top",
   },
   preloader: "Portfolio",
   notFound: {

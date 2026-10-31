@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   motion,
   useMotionValue,
@@ -11,6 +11,7 @@ import {
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { useLocalTime } from "@/lib/hooks/use-local-time";
 import { useRelativeTime } from "@/lib/hooks/use-relative-time";
+import { onHeroReplay } from "@/lib/rewind";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
@@ -23,6 +24,11 @@ export function Hero({ lastCommit = null }: { lastCommit?: LastCommit }) {
   const locale = useLocale();
   const time = useLocalTime(profile.timezone);
   const pushedAgo = useRelativeTime(lastCommit?.at, locale);
+
+  /* A rewind to the top ends with the opening played again: a new key per
+     take remounts the lines, which restarts their CSS rise from below. */
+  const [take, setTake] = useState(0);
+  useEffect(() => onHeroReplay(() => setTake((t) => t + 1)), []);
 
   /* Keyed by position rather than pushed into an array during render: a ref
      callback that returns a cleanup removes its own node when the letter
@@ -201,7 +207,7 @@ export function Hero({ lastCommit = null }: { lastCommit?: LastCommit }) {
           const endsWithPeriod = line.endsWith(".");
           const text = endsWithPeriod ? line.slice(0, -1) : line;
           return (
-            <span key={i} aria-hidden className="block overflow-hidden">
+            <span key={`${take}-${i}`} aria-hidden className="block overflow-hidden">
               <span
                 className={cn(
                   "block animate-[rise_1s_cubic-bezier(0.16,1,0.3,1)_both]",

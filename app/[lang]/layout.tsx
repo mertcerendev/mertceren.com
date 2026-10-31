@@ -15,6 +15,7 @@ import { AiAssistant } from "@/components/ui/ai-assistant";
 import { ContextMenu } from "@/components/ui/context-menu";
 import { TabPresence } from "@/components/ui/tab-presence";
 import { ConsoleGreeting } from "@/components/ui/console-greeting";
+import { RewindDirector, RewindReel } from "@/components/ui/rewind";
 import { defaultLocale, getContent, isLocale, localePath, locales } from "@/lib/content";
 import { socials } from "@/lib/data";
 import "../globals.css";
@@ -210,6 +211,8 @@ export default async function RootLayout({
               <ContextMenu />
               <TabPresence />
               <ConsoleGreeting />
+              <RewindReel />
+              <RewindDirector />
             </SmoothScroll>
           </ThemeProvider>
         </LocaleProvider>

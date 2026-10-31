@@ -505,6 +505,63 @@ html.custom-cursor [data-cursor="chick"][data-dragging="true"] * {
 /* Animations run for everyone by design — prefers-reduced-motion is
    intentionally not honored (owner's decision, 2026-07-03). */
 
+/* Rewind to the top (components/ui/rewind.tsx). While it runs, the grain
+   thickens and jitters like a tape winding back. Unlayered on purpose: it
+   has to beat the opacity utilities on the layer itself. */
+[data-grain] {
+  transition: opacity 300ms ease;
+}
+
+:root[data-rewinding] [data-grain] {
+  opacity: 0.55;
+  animation: rewind-grain 110ms steps(1) infinite;
+}
+
+@keyframes rewind-grain {
+  0% {
+    background-position: 0 0;
+  }
+  33% {
+    background-position: 23px -17px;
+  }
+  66% {
+    background-position: -11px 9px;
+  }
+}
+
+/* The display's "◀◀ REWIND" blinks the way a deck's does. */
+@keyframes rewind-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* The tracking band, rolling top to bottom. */
+@keyframes rewind-tracking {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+/* The balloon chick in the footer, bobbing on its string. Translate, the
+   standalone property, so the hover's scale on the same element survives. */
+@keyframes balloon-bob {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -3px;
+  }
+}
+
 /* The theme switch's circular reveal (components/layout/theme-toggle.tsx).
    Scoped to a class the toggle puts on <html> for the length of the reveal,
    so the route-change transitions that morph a project card into its case

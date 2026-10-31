@@ -89,6 +89,7 @@ export function GrainOverlay() {
            opacity. And because overlay leaves the average alone on both
            grounds, raising it adds texture without lifting the black or
            dirtying the paper. */
+        data-grain
         className="pointer-events-none fixed inset-0 z-100 opacity-[0.23] mix-blend-overlay dark:opacity-[0.30]"
         style={{ backgroundImage: NOISE_URL }}
       />

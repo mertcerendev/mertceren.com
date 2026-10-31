@@ -10,6 +10,8 @@ import { localePath } from "@/lib/content";
 import { foreignLang } from "@/lib/foreign";
 import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { useLocalTime } from "@/lib/hooks/use-local-time";
+import { onRewind, onRewindEnd, startRewind } from "@/lib/rewind";
+import { BalloonChick } from "@/components/ui/rewind";
 
 /* Shared by both copies of the wordmark so the lit one lands exactly over
    the base — they differ only in what fills the clipped text. */
@@ -71,9 +73,33 @@ export function Footer() {
     };
   }, []);
 
-  const backToTop = () => {
-    if (lenis) lenis.scrollTo(0, { duration: 1.4 });
-    else window.scrollTo({ top: 0, behavior: "smooth" });
+  /* The way back up is a rewind (components/ui/rewind.tsx). Two things
+     here take part in it: the wordmark lifts off as it starts, and the
+     balloon chick leaves its post for the flight. Both come back when it
+     ends, by which time the page has long covered the footer again. */
+  const [lifting, setLifting] = useState(false);
+  const [chickAway, setChickAway] = useState(false);
+  useEffect(() => {
+    const offStart = onRewind(({ source }) => {
+      if (source === "wordmark") setLifting(true);
+      if (source === "chick") setChickAway(true);
+    });
+    const offEnd = onRewindEnd(() => {
+      setLifting(false);
+      setChickAway(false);
+    });
+    return () => {
+      offStart();
+      offEnd();
+    };
+  }, []);
+
+  const rideBalloon = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const box = e.currentTarget.getBoundingClientRect();
+    startRewind({
+      source: "chick",
+      from: { x: box.left + box.width / 2, y: box.top + box.height / 2 },
+    });
   };
 
   /* On the home page the sections are right here, so the link scrolls to
@@ -259,17 +285,32 @@ export function Footer() {
             </div>
           </div>
 
-          <div className="mt-12 flex flex-wrap items-baseline justify-between gap-4 border-t hairline pt-6">
+          <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t hairline pt-6">
             <p className="microlabel">
               © {new Date().getFullYear()} {profile.name}
             </p>
-            <button
-              type="button"
-              onClick={backToTop}
-              className="microlabel tap-target transition-colors duration-300 hover:text-accent"
-            >
-              {ui.footer.backToTop}
-            </button>
+            <div className="flex items-center gap-5">
+              {/* The chick that went off duty with the header, waiting down
+                  here with a balloon. Takes you up with it. */}
+              <button
+                type="button"
+                onClick={rideBalloon}
+                aria-label={ui.rewind.chick}
+                title={ui.rewind.chick}
+                className={`tap-target -my-3 transition-[opacity,scale] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-110 ${
+                  chickAway ? "opacity-0" : "animate-[balloon-bob_3.2s_ease-in-out_infinite]"
+                }`}
+              >
+                <BalloonChick />
+              </button>
+              <button
+                type="button"
+                onClick={() => startRewind({ source: "button" })}
+                className="microlabel tap-target transition-colors duration-300 hover:text-accent"
+              >
+                {ui.footer.backToTop}
+              </button>
+            </div>
           </div>
 
           {/* Cropped wordmark, lit by the pointer. It was 6% ink and purely
@@ -279,11 +320,19 @@ export function Footer() {
               wall. Mouse only: there is no pointer to follow on a phone, and
               the overlay stays at zero there. `--foreground`, not
               `--color-foreground` — @theme inline does not emit the latter. */}
+          {/* Clicking it rewinds too, and the name lifts off the bottom of
+              the page on its way to the top — where the hero's own name rises
+              into place as the reel runs out. Not a button of its own: the
+              Rewind button above is the accessible way to the same thing, and
+              this stays the decoration it was, with one more thing to find. */}
           <div
             aria-hidden
             onPointerMove={trackLight}
             onPointerLeave={dropLight}
-            className="relative mt-8 overflow-hidden"
+            onClick={() => startRewind({ source: "wordmark" })}
+            className={`relative mt-8 cursor-pointer overflow-hidden transition-[translate,opacity] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              lifting ? "-translate-y-1/2 opacity-0" : ""
+            }`}
           >
             <p className={`${MARK} bg-foreground/[0.06]`}>{profile.name}</p>
             <p

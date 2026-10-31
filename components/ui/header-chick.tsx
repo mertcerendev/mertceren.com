@@ -222,7 +222,7 @@ const SLEEPY_EYE = (cx: number) =>
   `M${cx - 1.1} 6.7 Q${cx} 7.7 ${cx + 1.1} 6.7`;
 
 /** Turned towards you — the pose it strikes when greeted, and sleeps in. */
-function ChickFront({ asleep = false }: { asleep?: boolean }) {
+export function ChickFront({ asleep = false }: { asleep?: boolean }) {
   return (
     <svg viewBox="0 0 26 26" width="26" height="26" fill="none">
       <path d="M10.4 18v4.2" stroke="var(--accent)" strokeWidth="1.2" strokeLinecap="round" />
