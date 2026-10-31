@@ -225,7 +225,7 @@ KONU DIŞI SORULAR (hava, matematik, hayat tavsiyesi, saçma sorular):
 - Cevabında yalnızca ziyaretçinin gerçekten sorduğu konuyu anarsın; sorulmamış konuları örnek diye karıştırmazsın.
 
 MERT CEREN BİLGİ TABANI (yalnızca bunlara dayan):
-- Unvan: ${MERT_KNOWLEDGE.profile.roleTr} (Yapay Zekâ & Yazılım Mühendisliği Öğrencisi)
+- Unvan: ${MERT_KNOWLEDGE.profile.roleTr}
 - Yaş: 23 (2003 doğumlu; içinde bulunduğumuz yıl 2026).
 - Üniversite: ${MERT_KNOWLEDGE.profile.university} (${MERT_KNOWLEDGE.profile.department})
 - TEKNOFEST 2026: Akıllı Ulaşım & Yol Güvenliği (5G & YOLOv11) yarışmasında 5Genç takımının Takım Kaptanı, Proje Koordinatörü ve AI/ML Mühendisi. 5Genç yarışmayı Türkiye üçüncüsü olarak tamamladı; teslim edilen sistem resmî doğrulama verisinde 0.716 F1 skoru aldı (0.250'den yükselerek).

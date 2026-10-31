@@ -8,7 +8,7 @@ export const profile = {
   name: "Mert Ceren",
   monogram: "MC",
   wordmark: "mertceren",
-  role: "AI & Software Engineering Student",
+  role: "Software Engineering Student",
   tagline: "Building intelligent systems where software meets the physical world.",
   location: "Istanbul, Türkiye", // EDIT: or "Bandırma, Türkiye" outside internship season
   timezone: "Europe/Istanbul",
@@ -663,7 +663,7 @@ export type Ui = typeof ui;
 
 export const site = {
   url: "https://mertceren.com",
-  title: "Mert Ceren — AI & Software Engineering Student",
+  title: "Mert Ceren — Software Engineering Student",
   description:
     "Portfolio of Mert Ceren — software engineering student building AI-powered systems: real-time computer vision, 5G-connected road safety, and modern web platforms.",
 };
