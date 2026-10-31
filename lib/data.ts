@@ -36,6 +36,8 @@ export type Project = {
   description: string;
   tags: string[];
   href: string;
+  /** Public source repository, shown on the case study when set. */
+  repo?: string;
   image?: string;
   /** Shown as a badge on the card while a project is still being built. */
   status?: string;
@@ -64,6 +66,7 @@ export const projects: Project[] = [
       "An intelligent road-safety system pairing 5G connectivity with real-time computer vision — YOLO-based detection models trained in Python for assisted and autonomous driving scenarios. Placed 3rd in Türkiye at TEKNOFEST 2026 with Team 5Genç.",
     tags: ["Python", "YOLOv11", "Computer Vision", "5G"],
     href: "#", // EDIT: project/demo link if public
+    repo: "https://github.com/mertcerendev/teknofest5g-2026-5Genc",
     image: "/projects/road-safety.png",
     aiPrompt: "Can you explain the 5G and YOLOv11 architecture and your role as Team Captain in the Smart Road Safety project in detail?",
     palette: { from: "#FF4D00", via: "#2952E3", to: "#0B1024" },
@@ -164,6 +167,8 @@ export type ExperienceEntry = {
   summary: string;
   detail: string;
   logo?: string;
+  /** Where the work can be seen, linked at the end of the detail. */
+  href?: string;
 };
 
 export const experience: ExperienceEntry[] = [
@@ -174,16 +179,17 @@ export const experience: ExperienceEntry[] = [
     summary: "Leading the department's student society.",
     detail:
       "Since October 2026 I have chaired the board of the BANÜ Software Engineering Society in Bandırma.",
-    logo: "/logos/banu.jpg",
+    logo: "/logos/ymt-banu.png",
   },
   {
     period: "Aug 2026 — Sep 2026",
     title: "Software Engineering Intern",
     place: "İSKİ (Software Branch Directorate)",
-    summary: "20-working-day mandatory software engineering internship.",
+    summary: "Built Nuvia, a mobile e-commerce app, in Flutter and Node.js.",
     detail:
-      "Completed a 20-working-day mandatory software engineering internship (17 August – 11 September 2026) within the Software Branch Directorate of İSKİ's IT Department.",
+      "During my 20-working-day mandatory internship (17 August – 11 September 2026) in the Software Branch Directorate of İSKİ's IT Department, I built Nuvia: an end-to-end mobile e-commerce app with a product catalogue, cart, favourites, orders and a simulated payment, plus an admin side for managing products and order status. The app is written in Flutter; the server is Node.js and Express with Prisma over PostgreSQL.",
     logo: "/logos/iski.png",
+    href: "https://github.com/mertcerendev/iski-eticaret-mobil-staj",
   },
   {
     period: "Dec 2025 — Jun 2026",
@@ -652,6 +658,7 @@ export const ui = {
     back: "← Selected Works",
     live: "Live",
     visit: "Visit site ↗",
+    source: "Source code",
     next: "Next project",
     askAiPrompt: "Ask AI about this project ✨",
     blocks: { challenge: "Challenge", approach: "Approach", outcome: "Outcome" },

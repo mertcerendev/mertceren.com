@@ -36,6 +36,7 @@ export const projects: Project[] = [
       "5G bağlantısını gerçek zamanlı bilgisayarlı görüyle buluşturan akıllı bir yol güvenliği sistemi — destekli ve otonom sürüş senaryoları için Python'da eğitilen YOLO tabanlı tespit modelleri. 5Genç takımıyla TEKNOFEST 2026'da Türkiye üçüncüsü oldu.",
     tags: ["Python", "YOLOv11", "Bilgisayarlı Görü", "5G"],
     href: "#",
+    repo: "https://github.com/mertcerendev/teknofest5g-2026-5Genc",
     image: "/projects/road-safety.png",
     aiPrompt: "Akıllı Yol Güvenliği projesinde 5G bağlantısı, YOLOv11 mimarisi ve takım kaptanı olarak rolünü detaylı anlatır mısın?",
     palette: { from: "#FF4D00", via: "#2952E3", to: "#0B1024" },
@@ -137,16 +138,17 @@ export const experience: ExperienceEntry[] = [
     summary: "Bölümün öğrenci topluluğunu yönetiyorum.",
     detail:
       "Ekim 2026'dan bu yana Bandırma'da BANÜ Yazılım Mühendisliği Topluluğu'nun yönetim kurulu başkanlığını yürütüyorum.",
-    logo: "/logos/banu.jpg",
+    logo: "/logos/ymt-banu.png",
   },
   {
     period: "Ağu 2026 — Eyl 2026",
     title: "Yazılım Mühendisliği Stajyeri",
     place: "İSKİ (Yazılım Şube Müdürlüğü)",
-    summary: "20 iş günlük zorunlu yazılım mühendisliği stajı.",
+    summary: "Flutter ve Node.js ile mobil e-ticaret uygulaması Nuvia'yı geliştirdim.",
     detail:
-      "İSKİ Bilgi İşlem Dairesi Başkanlığı Yazılım Şube Müdürlüğü bünyesinde 20 iş günü süren zorunlu yazılım mühendisliği stajımı tamamladım (17 Ağustos – 11 Eylül 2026).",
+      "İSKİ Bilgi İşlem Dairesi Başkanlığı Yazılım Şube Müdürlüğü'nde 20 iş günü süren zorunlu stajımda (17 Ağustos – 11 Eylül 2026) Nuvia'yı geliştirdim: ürün kataloğu, sepet, favoriler, sipariş ve ödeme simülasyonu içeren, ürünlerin ve sipariş durumlarının yönetildiği bir yönetici tarafı da olan uçtan uca bir mobil e-ticaret uygulaması. Mobil uygulama Flutter ile, sunucu Node.js ve Express ile yazıldı; veri Prisma üzerinden PostgreSQL'de duruyor.",
     logo: "/logos/iski.png",
+    href: "https://github.com/mertcerendev/iski-eticaret-mobil-staj",
   },
   {
     period: "Ara 2025 — Haz 2026",
@@ -338,6 +340,7 @@ export const ui: Ui = {
     back: "← Seçilmiş Projeler",
     live: "Canlı",
     visit: "Siteye git ↗",
+    source: "Kaynak kod",
     next: "Sıradaki proje",
     askAiPrompt: "Bu projeyi Asistana Sor ✨",
     blocks: { challenge: "Zorluk", approach: "Yaklaşım", outcome: "Sonuç" },

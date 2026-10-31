@@ -190,6 +190,21 @@ export default async function CaseStudyPage({
                 <dd className="text-sm font-medium sm:text-base">{fact.value}</dd>
               </div>
             ))}
+            {project.repo && (
+              <div className="flex items-baseline justify-between gap-6 border-b hairline py-4">
+                <dt className="microlabel">{ui.caseStudy.source}</dt>
+                <dd>
+                  <a
+                    href={project.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-accent hover:underline sm:text-base"
+                  >
+                    {ui.sections.github.viewRepo}
+                  </a>
+                </dd>
+              </div>
+            )}
             {project.href !== "#" && (
               <div className="flex items-baseline justify-between gap-6 border-b hairline py-4">
                 <dt className="microlabel">{ui.caseStudy.live}</dt>

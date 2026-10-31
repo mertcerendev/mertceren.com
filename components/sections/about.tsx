@@ -152,6 +152,16 @@ export function About() {
                           <p className="max-w-lg pt-3 text-sm leading-relaxed text-foreground/80">
                             {entry.detail}
                           </p>
+                          {entry.href && (
+                            <a
+                              href={entry.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="microlabel tap-target mt-3 inline-block text-accent transition-opacity duration-300 hover:opacity-70"
+                            >
+                              {ui.sections.github.viewRepo}
+                            </a>
+                          )}
                         </div>
                       </div>
                     </div>
