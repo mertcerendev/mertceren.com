@@ -78,6 +78,13 @@ const QUEASY_EN = [
   "My feathers are a mess now, happy? 🪶",
 ];
 
+/**
+ * Lights out: switching to the dark theme sends it to sleep where it stands,
+ * front-on with its eyes shut, for this long. Switching back, hovering it or
+ * dropping food wakes it early.
+ */
+const DOZE_MS = 3600;
+
 /** Feeding. */
 /**
  * Ground speed while heading for food. The stride in globals.css divides by
@@ -210,8 +217,12 @@ function ChickSide() {
   );
 }
 
-/** Turned towards you — the pose it strikes when greeted. */
-function ChickFront() {
+/** Shut eyes for the doze: a shallow downward curve where each eye was. */
+const SLEEPY_EYE = (cx: number) =>
+  `M${cx - 1.1} 6.7 Q${cx} 7.7 ${cx + 1.1} 6.7`;
+
+/** Turned towards you — the pose it strikes when greeted, and sleeps in. */
+function ChickFront({ asleep = false }: { asleep?: boolean }) {
   return (
     <svg viewBox="0 0 26 26" width="26" height="26" fill="none">
       <path d="M10.4 18v4.2" stroke="var(--accent)" strokeWidth="1.2" strokeLinecap="round" />
@@ -226,24 +237,38 @@ function ChickFront() {
 
         <circle cx="13" cy="7.6" r="5" fill="var(--chick-body)" />
         <path d="M13 9.1 14.6 10.4 13 11.7 11.4 10.4z" fill="var(--accent)" />
-        <ellipse
-          className="chick-part chick-eye"
-          style={{ transformOrigin: "center" }}
-          cx="11.1"
-          cy="6.9"
-          rx="0.95"
-          ry="0.95"
-          fill={INK}
-        />
-        <ellipse
-          className="chick-part chick-eye"
-          style={{ transformOrigin: "center" }}
-          cx="14.9"
-          cy="6.9"
-          rx="0.95"
-          ry="0.95"
-          fill={INK}
-        />
+        {asleep ? (
+          [11.1, 14.9].map((cx) => (
+            <path
+              key={cx}
+              d={SLEEPY_EYE(cx)}
+              stroke={INK}
+              strokeWidth="0.85"
+              strokeLinecap="round"
+            />
+          ))
+        ) : (
+          <>
+            <ellipse
+              className="chick-part chick-eye"
+              style={{ transformOrigin: "center" }}
+              cx="11.1"
+              cy="6.9"
+              rx="0.95"
+              ry="0.95"
+              fill={INK}
+            />
+            <ellipse
+              className="chick-part chick-eye"
+              style={{ transformOrigin: "center" }}
+              cx="14.9"
+              cy="6.9"
+              rx="0.95"
+              ry="0.95"
+              fill={INK}
+            />
+          </>
+        )}
       </g>
     </svg>
   );
@@ -311,6 +336,10 @@ export function HeaderChick() {
   const [queasyMessage, setQueasyMessage] = useState<string | null>(null);
   const [food, setFood] = useState<number | null>(null);
   const [thanksMessage, setThanksMessage] = useState<string | null>(null);
+  const [dozing, setDozing] = useState(false);
+  /** Read by the frame loop and by paint(), which outlive any one render. */
+  const dozingRef = useRef(false);
+  const dozeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   /**
    * Far end of the walk. The track spans the whole header, but the chick has
@@ -349,7 +378,10 @@ export function HeaderChick() {
     // greeting pose faces front and is symmetrical, so it stays unflipped —
     // otherwise the mirror would throw the heart out to the wrong side.
     const facing =
-      greetingRef.current || queasyRef.current || gazingRef.current
+      greetingRef.current ||
+      queasyRef.current ||
+      gazingRef.current ||
+      dozingRef.current
         ? 1
         : dirRef.current;
     chick.style.transform = `translateX(${xRef.current}px) scaleX(${facing})`;
@@ -513,7 +545,10 @@ export function HeaderChick() {
           ? Math.min(now - lastFrameRef.current, 60)
           : 0;
         const held =
-          draggingRef.current || greetingRef.current || queasyRef.current;
+          draggingRef.current ||
+          greetingRef.current ||
+          queasyRef.current ||
+          dozingRef.current;
         const pecking = now < peckUntilRef.current;
         // Only on the edges, so the pose swap does not re-render every frame.
         const isGazing = now < gazeUntilRef.current;
@@ -607,11 +642,55 @@ export function HeaderChick() {
       if (queasyTimerRef.current) clearTimeout(queasyTimerRef.current);
       if (thanksTimerRef.current) clearTimeout(thanksTimerRef.current);
       if (introTimerRef.current) clearTimeout(introTimerRef.current);
+      if (dozeTimerRef.current) clearTimeout(dozeTimerRef.current);
     },
     []
   );
 
+  const wake = () => {
+    if (dozeTimerRef.current) clearTimeout(dozeTimerRef.current);
+    if (!dozingRef.current) return;
+    dozingRef.current = false;
+    setDozing(false);
+  };
+
+  /**
+   * Watches the class on <html> rather than reading resolvedTheme: the theme
+   * is a fact about the document, and observing it makes this a subscription
+   * whose callback sets state, rather than an effect that sets state in its
+   * own body every time the theme prop moves.
+   *
+   * Only the change to dark puts it to sleep — the theme it loads in is just
+   * the weather, and every visitor arriving in the default dark theme would
+   * otherwise find it asleep before it had taken a step.
+   */
+  useEffect(() => {
+    const root = document.documentElement;
+    let dark = root.classList.contains("dark");
+
+    const observer = new MutationObserver(() => {
+      const nowDark = root.classList.contains("dark");
+      if (nowDark === dark) return;
+      dark = nowDark;
+
+      if (!nowDark) {
+        wake();
+        return;
+      }
+      if (draggingRef.current) return;
+      dozingRef.current = true;
+      setDozing(true);
+      if (dozeTimerRef.current) clearTimeout(dozeTimerRef.current);
+      dozeTimerRef.current = setTimeout(wake, DOZE_MS);
+    });
+
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
   const startGreeting = () => {
+    // Being noticed wakes it.
+    wake();
     if (greetTimerRef.current) clearTimeout(greetTimerRef.current);
     greetingRef.current = true;
     setGreeting(true);
@@ -656,8 +735,9 @@ export function HeaderChick() {
     // pause it may be standing in.
     peckUntilRef.current = 0;
     pausedUntilRef.current = 0;
-    // Food outranks admiring the reader.
+    // Food outranks admiring the reader, and sleep.
     gazeUntilRef.current = 0;
+    wake();
   };
 
   const positionFromPointer = (clientX: number) => {
@@ -764,7 +844,21 @@ export function HeaderChick() {
           }}
           className={`pointer-events-auto absolute bottom-0 left-0 touch-none select-none leading-none${queasyMessage ? " chick-queasy" : ""}`}
         >
-          {greeting || queasyMessage || gazing ? <ChickFront /> : <ChickSide />}
+          {greeting || queasyMessage || gazing || dozing ? (
+            <ChickFront asleep={dozing} />
+          ) : (
+            <ChickSide />
+          )}
+
+          {dozing && (
+            // Same drift as the heart, looping for as long as it sleeps.
+            <span
+              style={{ animation: "chick-heart 1.6s ease-out infinite" }}
+              className="absolute left-full top-0 text-[0.6rem] leading-none"
+            >
+              💤
+            </span>
+          )}
 
           {greeting && (
             // Sits beside the head rather than above it: the track clips
