@@ -10,6 +10,47 @@ const READING_LINE = 0.35;
 
 type Entry = { id: string; index: string; label: string };
 
+/** What the label is made of while it decodes. Uppercase, because the
+    microlabel style uppercases the real text it settles into. */
+const GLYPHS = "ABCDEFGHIJKLMNOPRSTUVYZ0123456789#/<>_";
+/** Long enough to read as decoding, short of the 0.4s fade it runs inside. */
+const DECODE_MS = 380;
+const DECODE_STEP_MS = 34;
+
+/** `text` with everything past the first `settled` letters swapped for noise. */
+function noise(text: string, settled: number, seed: number): string {
+  return Array.from(text, (ch, i) =>
+    i < settled || ch === " "
+      ? ch
+      : GLYPHS[(i * 7 + seed * 13) % GLYPHS.length]
+  ).join("");
+}
+
+/**
+ * The label arrives as noise and resolves into the name left to right.
+ *
+ * Mounted once per section — the label above is keyed by section — so all it
+ * has to do is run once from mount. The first frame is computed from the
+ * letters' positions instead of Math.random, which keeps the render pure;
+ * the shuffling after that happens in the timer, where randomness is fine.
+ */
+function DecodedText({ text }: { text: string }) {
+  const [shown, setShown] = useState(() => noise(text, 0, 0));
+
+  useEffect(() => {
+    const start = performance.now();
+    const id = window.setInterval(() => {
+      const t = Math.min(1, (performance.now() - start) / DECODE_MS);
+      const settled = Math.floor(t * text.length);
+      setShown(noise(text, settled, Math.floor(Math.random() * 97)));
+      if (t === 1) window.clearInterval(id);
+    }, DECODE_STEP_MS);
+    return () => window.clearInterval(id);
+  }, [text]);
+
+  return <>{shown}</>;
+}
+
 /**
  * The section you are in, set down the left gutter like a page spine.
  *
@@ -124,7 +165,7 @@ export function SectionSpine() {
           >
             <span className="text-accent">{current.index}</span>
             <span className="my-3 select-none">—</span>
-            {current.label}
+            <DecodedText text={current.label} />
           </motion.p>
         )}
       </AnimatePresence>
