@@ -505,6 +505,28 @@ html.custom-cursor [data-cursor="chick"][data-dragging="true"] * {
 /* Animations run for everyone by design — prefers-reduced-motion is
    intentionally not honored (owner's decision, 2026-07-03). */
 
+/* The theme switch's circular reveal (components/layout/theme-toggle.tsx).
+   Scoped to a class the toggle puts on <html> for the length of the reveal,
+   so the route-change transitions that morph a project card into its case
+   study keep the browser's default cross-fade.
+
+   The old snapshot stays put underneath and the new one is clipped open over
+   it by a script-driven animation; the default fade on either would show
+   both themes blending inside the circle. The live page is frozen for the
+   duration too, or every transition-colors element would be caught fading
+   out of the old palette in the new snapshot. */
+:root.theme-vt::view-transition-old(root),
+:root.theme-vt::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+:root.theme-vt *,
+:root.theme-vt *::before,
+:root.theme-vt *::after {
+  transition: none !important;
+}
+
 /* Touch gets no hover — Tailwind v4 withholds those styles from it on
    purpose, which is right, but it leaves a tap with no answer at all until
    the page changes. This is the answer: one rule for every control rather
