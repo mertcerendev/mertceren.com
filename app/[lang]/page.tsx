@@ -49,7 +49,13 @@ export default async function Home({
     <>
       <Header />
       <main id="main">
-        <Hero />
+        <Hero
+          lastCommit={
+            stats?.lastPush && stats.lastPushRepo
+              ? { at: stats.lastPush, repo: stats.lastPushRepo }
+              : null
+          }
+        />
         <Works />
         <About />
         <Skills />

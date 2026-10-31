@@ -83,6 +83,8 @@ export type GithubStats = {
   publicRepos: number;
   /** ISO timestamp of the most recent push across the inspected repos. */
   lastPush: string | null;
+  /** The repository that push went to. */
+  lastPushRepo: string | null;
 };
 
 type ApiRepo = {
@@ -204,5 +206,6 @@ export async function getGithubStats(): Promise<GithubStats | null> {
     repoFacts,
     publicRepos: own.length,
     lastPush: own[0]?.pushed_at ?? null,
+    lastPushRepo: own[0]?.name ?? null,
   };
 }

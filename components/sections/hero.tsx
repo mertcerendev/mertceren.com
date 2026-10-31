@@ -8,16 +8,21 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import { useContent } from "@/components/providers/locale-provider";
+import { useContent, useLocale } from "@/components/providers/locale-provider";
 import { useLocalTime } from "@/lib/hooks/use-local-time";
+import { useRelativeTime } from "@/lib/hooks/use-relative-time";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
-export function Hero() {
+type LastCommit = { at: string; repo: string } | null;
+
+export function Hero({ lastCommit = null }: { lastCommit?: LastCommit }) {
   const sectionRef = useRef<HTMLElement>(null);
   const { heroStatement, profile, ui } = useContent();
+  const locale = useLocale();
   const time = useLocalTime(profile.timezone);
+  const pushedAgo = useRelativeTime(lastCommit?.at, locale);
 
   /* Keyed by position rather than pushed into an array during render: a ref
      callback that returns a cleanup removes its own node when the letter
@@ -259,6 +264,31 @@ export function Hero() {
           <p className="microlabel tabular-nums" suppressHydrationWarning>
             {time ? `${time} — ${ui.hero.localSuffix}` : " "}
           </p>
+          {/* The most recent push on GitHub, from the same API call the
+              GitHub section makes — proof of life next to the clock. Only
+              when the call succeeded: there is no hand-written fallback for
+              "when did he last push", and an invented one would be a lie.
+              The phrase itself is worked out in the browser; see the hook. */}
+          {lastCommit && (
+            <a
+              href={`https://github.com/mertcerendev/${lastCommit.repo}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="microlabel tap-target transition-colors duration-300 hover:text-accent"
+            >
+              {pushedAgo ? (
+                <>
+                  {ui.sections.github.lastPush} · {pushedAgo}
+                  <span className="mx-2 select-none" aria-hidden>
+                    —
+                  </span>
+                  {lastCommit.repo}
+                </>
+              ) : (
+                " "
+              )}
+            </a>
+          )}
           {profile.available && (
             <p className="microlabel flex items-center gap-2 text-foreground">
               <span className="relative flex size-2">
