@@ -369,7 +369,7 @@ export const awards = [
   },
 ];
 
-// EDIT: örnek satırlar — canlıya almadan gerçek sertifikalarınla değiştir.
+// lib/data.ts'teki listenin Türkçesi, yeniden eskiye.
 export const certificates: Certificate[] = [
   {
     title: "Claude Code 101",
