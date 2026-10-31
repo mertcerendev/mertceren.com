@@ -131,6 +131,15 @@ export const about = {
 
 export const experience: ExperienceEntry[] = [
   {
+    period: "Eki 2026 — Şu an",
+    title: "Yönetim Kurulu Başkanı",
+    place: "BANÜ Yazılım Mühendisliği Topluluğu",
+    summary: "Bölümün öğrenci topluluğunu yönetiyorum.",
+    detail:
+      "Ekim 2026'dan bu yana Bandırma'da BANÜ Yazılım Mühendisliği Topluluğu'nun yönetim kurulu başkanlığını yürütüyorum.",
+    logo: "/logos/banu.jpg",
+  },
+  {
     period: "Ağu 2026 — Eyl 2026",
     title: "Yazılım Mühendisliği Stajyeri",
     place: "İSKİ (Yazılım Şube Müdürlüğü)",
@@ -362,6 +371,12 @@ export const awards = [
 
 // EDIT: örnek satırlar — canlıya almadan gerçek sertifikalarınla değiştir.
 export const certificates: Certificate[] = [
+  {
+    title: "Claude Code 101",
+    issuer: "Claude Academy",
+    issued: "Eyl 2026",
+    image: "/certificates/claude-code-101.png",
+  },
   {
     title: "Versiyon Kontrolleri: Git ve GitHub",
     issuer: "BTK Akademi",

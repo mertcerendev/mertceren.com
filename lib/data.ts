@@ -168,6 +168,15 @@ export type ExperienceEntry = {
 
 export const experience: ExperienceEntry[] = [
   {
+    period: "Oct 2026 — Now",
+    title: "President of the Board",
+    place: "BANÜ Software Engineering Society",
+    summary: "Leading the department's student society.",
+    detail:
+      "Since October 2026 I have chaired the board of the BANÜ Software Engineering Society in Bandırma.",
+    logo: "/logos/banu.jpg",
+  },
+  {
     period: "Aug 2026 — Sep 2026",
     title: "Software Engineering Intern",
     place: "İSKİ (Software Branch Directorate)",
@@ -389,6 +398,12 @@ export type Certificate = {
 // Mirrors the LinkedIn "Licenses & certifications" list, newest first.
 // Titles are translated for this locale; issuer names stay as issued.
 export const certificates: Certificate[] = [
+  {
+    title: "Claude Code 101",
+    issuer: "Claude Academy",
+    issued: "Sep 2026",
+    image: "/certificates/claude-code-101.png",
+  },
   {
     title: "Version Control: Git and GitHub",
     issuer: "BTK Akademi",
